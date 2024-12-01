@@ -1,9 +1,24 @@
 <template>
   <div class="chat-container">
-    <div class="option-panel" v-if="ifReplyMessage">
-      <span class="option-text">Replying to</span>
-      <span class="option-user">{{replyMessage.Content}}</span>
-      <Icon @click="closeOptionPanel" class="x-icon" icon="lets-icons:close-round-fill" />
+    <div class="option-panel" v-if="OptionMessageId !== 0">
+      <div class="option-panel-message" v-if="OptionMessageId === 1">
+        <span class="option-text">Edit message: </span>
+        <span class="option-user">{{ editMessage.Content }}</span>
+        <Icon
+          @click="closeOptionPanel"
+          class="x-icon"
+          icon="lets-icons:close-round-fill"
+        />
+      </div>
+      <div class="option-panel-message" v-if="OptionMessageId === 2">
+        <span class="option-text">Replying to</span>
+        <span class="option-user">{{ replyMessage.Content }}</span>
+        <Icon
+          @click="closeOptionPanel"
+          class="x-icon"
+          icon="lets-icons:close-round-fill"
+        />
+      </div>
     </div>
 
     <div class="chat-input">
@@ -12,7 +27,11 @@
       </button>
 
       <form @submit.prevent="sendMessage">
-        <input type="text" placeholder="Type a message..." v-model="messageContent" />
+        <input
+          type="text"
+          placeholder="Type a message..."
+          v-model="messageContent"
+        />
         <button type="submit"><Icon icon="fa:send" /></button>
       </form>
       <button type="button" class="gif-button">
@@ -35,10 +54,16 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 const messageContent = ref("")
 
-const ifReplyMessage = ref(false)
+const OptionMessageId = ref(0)
 
 const props = defineProps({
+  //Returns message to add to ref 'message'
   addMessage: {
+    type: Function,
+    required: true
+  },
+  //Returns mesasge to change in ref 'message'
+  changeMessageContent: {
     type: Function,
     required: true
   },
@@ -57,95 +82,126 @@ const props = defineProps({
 })
 
 watch(
-    () => props.editMessage,
-    (newValue, oldValue) => {
-      if (newValue) {
-        messageContent.value = newValue.Content
-      }
+  () => ({
+    id: props.editMessage?.MessageId,
+    version: props.editMessage?.MessageTimesRepeatCount
+  }),
+  (newValue, oldValue) => {
+    if (newValue) {
+      OptionMessageId.value = 1;
+      messageContent.value = props.editMessage.Content
     }
+  }
 );
+
 watch(
     () => props.replyMessage,
     (newValue, oldValue) => {
-
       if (newValue) {
-        ifReplyMessage.value = true;
-        console.log(props.replyMessage.MessageId)
-        console.log("test")
-
+        OptionMessageId.value = 2;
       }
-    }
+    },
+  { deep: true }
 );
-
-const closeOptionPanel = () => {
-  ifReplyMessage.value = false
-}
-
 
 
 const sendMessage = () => {
-  if (messageContent.value){
-
+  //Normal sending message additional might send a reply
+  if (OptionMessageId.value === 0 || OptionMessageId.value === 2 &&  messageContent.value){
     axios.post(
         `${import.meta.env.VITE_BACKEND_ADDRESS}/messages/send`,
         {
           target: route.params.id,
           content: messageContent.value,
-          ...(ifReplyMessage.value ? {reply: props.replyMessage.MessageId} : {})
+          ...(OptionMessageId.value ? {reply: props.replyMessage.MessageId} : {})
         }, {
           headers: {
             Authorization: localStorage.getItem('jwt')
           }
         }
     )
-        .then(res => {
-          if (res.status === 200) {
-            props.addMessage(res.data)
-            ifReplyMessage.value = false;
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+    .then(res => {
+      if (res.status === 200) {
+        props.addMessage(res.data)
+        closeOptionPanel()
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 
-    messageContent.value = ''
+  }
+  //Editing message
+  else if(OptionMessageId.value === 1 &&  messageContent.value){
+    const changedMessage = {... props.editMessage, Content: messageContent.value};
+    axios.post(
+     `${import.meta.env.VITE_BACKEND_ADDRESS}/messages/edit`,
+      {
+      target: route.params.id,
+      sentat: changedMessage.SentAt,
+      sentattime: changedMessage.SentAtTime,
+      message: changedMessage.MessageId,
+      content: changedMessage.Content
+      },{
+       headers: {
+         Authorization: localStorage.getItem('jwt')
+       }
+      }
+    )
+    .then(res => {
+      if (res.status === 200) {
+        props.changeMessageContent(changedMessage)
+        closeOptionPanel()
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
   }
 }
 
+
+//Close panel on the top of chat
+const closeOptionPanel = () => {
+  OptionMessageId.value = 0
+  messageContent.value = '';
+}
 </script>
 
 <style lang="scss" scoped>
-@import './../../panel.scss';
+@import "./../../panel.scss";
 
 .chat-container {
-
   .option-panel {
-    display: flex;
-    align-items: center;
     background-color: #282828;
     color: #ccc;
-    padding: 6px;
-    padding-left: 15px;
     border-radius: 10px 10px 0 0;
     font-size: 15px;
 
-    .option-text {
-      font-size: 14px;
-    }
+    .option-panel-message {
+      display: flex;
+      padding: 6px;
+      padding-left: 15px;
+      align-items: center;
 
-    .option-user {
-      margin-left: 10px;
-      font-size: 14px;
-    }
+      .option-text {
+        font-size: 14px;
+      }
 
-    .x-icon {
-      margin-left: auto;
-      margin-right: 10px;
-      font-size: 20px;
+      .option-user {
+        margin-left: 10px;
+        font-size: 14px;
+      }
 
-      &:hover {
-        color: white;
-        cursor: pointer;
+      .x-icon {
+        margin-left: auto;
+        margin-right: 10px;
+        font-size: 20px;
+
+        &:hover {
+          color: white;
+          cursor: pointer;
+        }
       }
     }
   }
@@ -185,7 +241,7 @@ const sendMessage = () => {
       color: white;
     }
 
-    button[type='submit'] {
+    button[type="submit"] {
       padding: 0.5rem;
       background-color: #7289da;
       border: none;

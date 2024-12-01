@@ -143,12 +143,22 @@ watch(
     }
 )
 
+//Add message to ref 'message'
 const addMessage = (message: any) => {
   messages.value.unshift({
     ...message,
     combineMessage: !checkTimeDifferences(lastMessage.value, message)
   })
   lastMessage.value = message
+}
+
+//Edit message content inside ref 'message'
+const changeMessageContent = (changedMessage: any) => {
+  const messageToChange= messages.value.find(
+    (message) => message.MessageId === changedMessage.MessageId
+  );
+  messageToChange.Content = changedMessage.Content;
+  messageToChange.Edited = true;
 }
 
 //Before Mound
@@ -172,7 +182,6 @@ const menuHeight = ref<number>(10)
 const menuWidth = ref<number>(10)
 
 const openContextMenu = (event: any, targetid: String) => {
-  console.log("klik")
   contextMenuMessageId.value = targetid;
 
   // Coursor position
@@ -202,8 +211,6 @@ onUnmounted(() => {
   document.removeEventListener('click', closeContextMenu)
 })
 
-
-
 //input element
 
 const replyMessageData = ref<any>()
@@ -215,19 +222,35 @@ function addReaction() {
 }
 
 function replyMessage(replyMessageId:String) {
+  const backupReplyMessageData = replyMessageData.value
   replyMessageData.value = messages.value.find(
       (message) => message.MessageId === replyMessageId
   );
-  //IdOfTheUpdate is used to make sure that watch function always will react for changes
+
+  if(backupReplyMessageData && backupReplyMessageData === replyMessageData.value){
+    replyMessageData.value.MessageTimesRepeatCount ++;
+  }
+  else{
+    replyMessageData.value.MessageTimesRepeatCount = 0;
+  }
+
   isInputFocused.value = true
   //console.log(editMessageData.value)
 }
 
 const editMessage = (editMessageId:String) => {
+  const backupEditMessageData = editMessageData.value
   editMessageData.value = messages.value.find(
       (message) => message.MessageId === editMessageId
   );
-  //console.log(editMessageData.value)
+
+  if(backupEditMessageData && backupEditMessageData === editMessageData.value){
+    editMessageData.value.MessageTimesRepeatCount ++;
+  }
+  else{
+    editMessageData.value.MessageTimesRepeatCount = 0;
+  }
+  //console.log(editMessageData.value.MessageTimesRepeatCount);
 }
 
 const deleteMessage = (deleteMessageId:String) => {
@@ -305,7 +328,7 @@ onMounted(() => {
             :sentDate="timeAgo(message.SentAtTime)"
             :content="message.Content"
             :combineMessage="message.combineMessage"
-            :edited="message.edited"
+            :edited="message.Edited"
             @contextmenu.prevent="openContextMenu($event, message.MessageId)"
         />
 
@@ -324,7 +347,13 @@ onMounted(() => {
           </ul>
         </div>
       </div>
-      <MessageInput :addMessage="addMessage" :editMessage="editMessageData" :replyMessage="replyMessageData" :isFocused="isInputFocused" />
+      <MessageInput
+        :addMessage="addMessage"
+        :changeMessageContent="changeMessageContent"
+        :editMessage="editMessageData"
+        :replyMessage="replyMessageData"
+        :isFocused="isInputFocused"
+      />
     </div>
   </div>
 </template>

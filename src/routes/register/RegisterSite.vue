@@ -162,7 +162,10 @@ const handleSubmit = async (e: Event) => {
         <button type="submit" class="btn">Register</button>
         <div class="register-link">
           <p>Have an account? <router-link to="/login">Login</router-link></p>
-          <p>Don't wanna be here? <a href="/">Kill your self</a></p>
+          <p>
+            Wanna go back?
+            <a href="/">Main page</a>
+          </p>
         </div>
       </form>
     </div>

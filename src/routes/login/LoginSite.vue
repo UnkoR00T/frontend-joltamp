@@ -143,8 +143,8 @@ const handleSubmit = async (e: Event) => {
             <router-link to="/register">Register</router-link>
           </p>
           <p>
-            Don't wanna be here?
-            <a href="/">Kill yourself</a>
+            Wanna go back?
+            <a href="/">Main page</a>
           </p>
         </div>
       </form>

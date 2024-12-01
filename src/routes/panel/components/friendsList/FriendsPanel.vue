@@ -71,7 +71,7 @@ const addFriend = () => {
       <hr />
       <form class="find-friend" @submit.prevent="addFriend">
         <input type="text" id="addFriend" placeholder="Search" v-model="addFriendName" />
-        <button type="submit">find an idiot</button>
+        <button type="submit">Find friend</button>
       </form>
       <hr />
       <div class="friends-count">ONLINE -</div>

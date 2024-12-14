@@ -109,25 +109,26 @@ const sendMessage = () => {
   //Normal sending message additional might send a reply
   if (OptionMessageId.value === 0 || OptionMessageId.value === 2 &&  messageContent.value){
     axios.post(
-        `${import.meta.env.VITE_BACKEND_ADDRESS}/messages/send`,
-        {
-          target: route.params.id,
-          content: messageContent.value,
-          ...(OptionMessageId.value ? {reply: props.replyMessage.MessageId} : {})
-        }, {
-          headers: {
-            Authorization: localStorage.getItem('jwt')
-          }
+      `${import.meta.env.VITE_BACKEND_ADDRESS}/messages/send`,
+      {
+        target: route.params.id,
+        content: messageContent.value,
+        ...(OptionMessageId.value ? {reply: props.replyMessage.MessageId} : {})
+      }, {
+        headers: {
+          Authorization: localStorage.getItem('jwt')
         }
+      }
     )
     .then(res => {
       if (res.status === 200) {
-        props.addMessage(res.data)
+        props.addMessage(res.data, 0)
         closeOptionPanel()
       }
     })
     .catch((err) => {
       console.log(err)
+      props.addMessage(res.data, 2)
     })
 
   }

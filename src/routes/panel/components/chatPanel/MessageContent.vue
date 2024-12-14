@@ -25,7 +25,7 @@
           </span>
           <span class="message-sent-date">{{ sentDate }}</span>
         </div>
-        <span class="message-content">
+        <span class="message-content" :class="dynamicStatusClass">
           {{ content }}
           <span class="ifEdited" v-if="edited">(edited)</span>
         </span>
@@ -49,18 +49,30 @@ import { ref } from 'vue';
 
 
 const showButtons = ref(false);
+const dynamicStatusClass = ref("test")
 
-
-defineProps({
+const props = defineProps({
   id: { type: String, required: true },
+  sendStatus: { type: Number, default: 0 },
   reply: { type: Object, required: false },
   imgUrl: { type: String, required: true },
-  nickname: { type: String, required: true },
+  nickname: { type: String, required: false },
   sentDate: { type: String, required: true },
   content: { type: String, required: true },
   combineMessage: { type: Boolean, required: true },
   edited: {type: Boolean, default: false, required: false},
 });
+
+if (props.sendStatus === 0) {
+  console.log("statusok")
+  dynamicStatusClass.value = 'statusOK';
+} else if (props.sendStatus === 1) {
+  console.log("status waiting")
+  dynamicStatusClass.value =  'statusWAITING';
+} else if (props.sendStatus === 2) {
+  console.log("status error")
+  dynamicStatusClass.value =  'statusERROR';
+}
 
 </script>
 
@@ -170,6 +182,17 @@ defineProps({
           user-select: none;
         }
       }
+
+      .statusOK{
+        color: white;
+      }
+      .statusERROR{
+        color: red;
+      }
+      .statusWAITING{
+        color: silver;
+      }
+
     }
 
     .message-actions {

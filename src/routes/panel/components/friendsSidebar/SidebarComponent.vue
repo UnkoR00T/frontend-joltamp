@@ -53,10 +53,10 @@ const refreshFriends = () => {
     <hr />
     <div class="friends-list">
       <FriendComponent
-        v-for="(friend, key) in FriendsList"
+        v-for="friend in FriendsList"
         imgUrl="../../../../public/img/JoltampIcon.png"
-        :key="key"
-        :user-id="key"
+        :key="friend.user_id"
+        :userId="friend.user_id"
         :username="friend.displayname"
         description="None"
         :status="friend.status"

@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import MessageContent from './MessageContent.vue'
 import MessageInput from './MessageInput.vue'
-import { dataUserInfo } from '../../../../routes/panel/data/profile'
-import { dataFriendsList } from '../../../../routes/panel/data/friends'
+import { dataUsersList } from '../../data/users.ts'
 
 import axios from 'axios'
 import { useRoute } from 'vue-router'
-import { onBeforeMount, ref, watch, onMounted, onUnmounted } from 'vue'
+import { onBeforeMount, ref, watch, onMounted, onUnmounted, nextTick } from 'vue'
 
 // DefineStore variables
-const UserInfo = dataUserInfo()
-const FriendsList = dataFriendsList()
+const UsersList = dataUsersList()
+
+UsersList.refreshFriendsList()
+UsersList.refreshProfileInfo()
 
 const route = useRoute()
 
@@ -37,11 +38,10 @@ const handleScroll = (event: any) => {
 
 //Getting info about user
 const getInfo = () => {
-  axios
-      .get(`${import.meta.env.VITE_BACKEND_ADDRESS}/users/getInfo/${route.params.id}`)
-      .then((response) => {
-        displayName.value = response.data.displayname
-      })
+  UsersList.findUser(route.params.id).then((user) => {
+    //console.log(user)
+    displayName.value = "test123123";
+  })
 }
 
 //Loading messages to "messages" - wrong order, not splited
@@ -85,9 +85,20 @@ const groupMessages = () => {
   lastMessage.value = {}
 
   messages.value.reverse()
-
+      //console.log(messages.value)
   messages.value.forEach((x, index) => {
-    if (checkTimeDifferences(lastMessage.value, x)) {
+
+
+    //To repair
+    UsersList.findUser(x.SentBy).then((user:any) => {
+      //console.log(messages.value)
+      //console.log(user.displayname, index, x.Content)
+        messages.value[messages.value.length -1 - index].displayname = user.displayname
+    })
+      //
+
+
+    if (checkTimeDifferences(lastMessage.value, x) && !x.Reply) {
       messages.value[index].combineMessage = false
     } else {
       lastMessage.value = x
@@ -101,56 +112,84 @@ const groupMessages = () => {
 function timeAgo(timestamp: number) {
   // Ensure timestamp is a valid number
   if (isNaN(timestamp)) {
-    return 'Invalid timestamp'
+    return 'Invalid timestamp';
   }
 
-  const now = Date.now() // Current timestamp
-  const diffInMs = now - timestamp
-  const diffInSec = diffInMs / 1000
-  const diffInMin = diffInSec / 60
-  const diffInHours = diffInMin / 60
-  const diffInDays = diffInHours / 24
+  const now = Date.now(); // Current timestamp
+  const diffInMs = now - timestamp;
+  const diffInSec = diffInMs / 1000;
+  const diffInMin = diffInSec / 60;
+  const diffInHours = diffInMin / 60;
+  const diffInDays = diffInHours / 24;
+  const diffInWeeks = diffInDays / 7;
+
+  const formatWithDateAndTime = () => {
+    const date = new Date(timestamp);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${year}/${month}/${day} at ${hours}:${minutes}`;
+  };
+
+  const formatWithTime = (timeAgo: string) => {
+    const date = new Date(timestamp);
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${timeAgo} at ${hours}:${minutes}`;
+  };
 
   if (diffInDays < 1) {
     // Less than 24 hours ago
     if (diffInHours < 1) {
-      if (diffInMin < 1) return `Now`
+      if (diffInMin < 1) return `Now`;
       else {
-        return `${Math.floor(diffInMin)} minutes ago`
+        return `${Math.floor(diffInMin)} minutes ago`;
       }
     } else {
-      return `${Math.floor(diffInHours)} hours ago`
+      return `${Math.floor(diffInHours)} hours ago`;
     }
   } else if (diffInDays < 2) {
     // Yesterday
-    return 'yesterday'
+    return formatWithTime('yesterday');
+  } else if (diffInWeeks < 1) {
+    // Less than 1 week ago
+    return formatWithTime(`${Math.floor(diffInDays)} days ago`);
   } else {
-    // More than 1 day ago
-    return `${Math.floor(diffInDays)} days ago`
+    // More than 1 week ago
+    return formatWithDateAndTime();
   }
 }
+
+
 
 // Catching changes in route.params.id
 watch(
     () => route.params.id,
     async (newId, oldId) => {
       if (newId !== oldId) {
-        messages.value = [] // Reset messages when route id changes
-        oldestMessage.value = {}
-        await getInfo() // Reset info about user
-        await loadMessages()
+        messages.value = []; // Reset messages when route id changes
+        oldestMessage.value = {};
+        getInfo(); // Reset info about user
+        await loadMessages();
       }
     }
 )
 
 //Add message to ref 'message'
-const addMessage = (message: any) => {
+const addMessage = (message: any, sendStatus: number) => {
   messages.value.unshift({
-    ...message,
+    ...message, sendStatus: sendStatus, displayname: UsersList.profile.displayname,
     combineMessage: !checkTimeDifferences(lastMessage.value, message)
-  })
-  lastMessage.value = message
+  });
+  lastMessage.value = message;
 }
+
+
+
+
+
 
 //Edit message content inside ref 'message'
 const changeMessageContent = (changedMessage: any) => {
@@ -163,39 +202,49 @@ const changeMessageContent = (changedMessage: any) => {
 
 //Before Mound
 onBeforeMount(() => {
-  getInfo()
-  loadMessages()
+  getInfo();
+  loadMessages();
 
-  FriendsList.refreshFriendsList()
+  UsersList.getFriendsList();
 
   setInterval(() => {
     // Trigger a re-render every minute
     messages.value = [...messages.value]
-  }, 60000)
+  }, 60000);
 })
 
 //Context menu
-const showContextMenu = ref(true)
+const showContextMenu = ref(false)
 const mousePosition = ref<{ x: number; y: number }>({ x: 0, y: 0 })
-const contextMenuMessageId = ref<String>("")
-const menuHeight = ref<number>(10)
-const menuWidth = ref<number>(10)
+const contextMenuMessageId = ref<String>("");
 
-const openContextMenu = (event: any, targetid: String) => {
+const openContextMenu = async(event: any, targetid: String) => {
   contextMenuMessageId.value = targetid;
+  showContextMenu.value = true;
+
+  await nextTick();
+
+  const contextmenu = document.getElementById('context-menu');
+  const menuWidth = contextmenu?.clientWidth ?? 0;
+  const menuHeight:number = contextmenu?.clientHeight ?? 0;
 
   // Coursor position
   mousePosition.value = { x: event.clientX, y: event.clientY };
   // Make sure that context menu is not outside the screen
   const contextMenuMargin:number = 10;
 
-  if (mousePosition.value.x + menuWidth.value > window.innerWidth) mousePosition.value.x = window.innerWidth - menuWidth.value - contextMenuMargin;
-  if (mousePosition.value.y + menuHeight.value > window.innerHeight) mousePosition.value.y = window.innerHeight - menuHeight.value - contextMenuMargin;
+  if (mousePosition.value.x + menuWidth > window.innerWidth) mousePosition.value.x = window.innerWidth - menuWidth - contextMenuMargin;
+  if (mousePosition.value.y + menuHeight > window.innerHeight) mousePosition.value.y = window.innerHeight - menuHeight - contextMenuMargin;
   if (mousePosition.value.x < 0) mousePosition.value.x = contextMenuMargin;
   if (mousePosition.value.y < 0) mousePosition.value.y = contextMenuMargin;
 
   // Making context menu visible
-  showContextMenu.value = true;
+  //showContextMenu.value = true;
+}
+
+const ifMyMessage = (messageId: String) => {
+  const messageData = messages.value.find((message) => message.MessageId === messageId)
+  return !!(messageData && messageData.SentBy === localStorage.getItem('userId'));
 }
 
 //hide context menu
@@ -285,11 +334,13 @@ const deleteMessage = (deleteMessageId:String) => {
 //Before Mound
 onMounted(() => {
   // Size of context menu
+  /*
   const contextmenu = document.getElementById('context-menu');
   menuWidth.value = contextmenu?.clientWidth ?? 0;
   menuHeight.value = contextmenu?.clientHeight ?? 0;
 
   showContextMenu.value = false
+   */
 })
 
 </script>
@@ -322,9 +373,10 @@ onMounted(() => {
             v-for="message in messages"
             :key="message.MessageId"
             :id="message.MessageId"
+            :sendStatus="message.sendStatus"
             :reply="message.ReplyBody"
             imgUrl="https://via.placeholder.com/40"
-            :nickname="message.SentBy == UserInfo.user_id ? UserInfo.displayname : displayName"
+            :nickname="message.displayname"
             :sentDate="timeAgo(message.SentAtTime)"
             :content="message.Content"
             :combineMessage="message.combineMessage"
@@ -342,8 +394,8 @@ onMounted(() => {
           <ul>
             <li @click="addReaction">Add reaction</li>
             <li @click="replyMessage(contextMenuMessageId)">Reply</li>
-            <li @click="editMessage(contextMenuMessageId)">Edit Message</li>
-            <li @click="deleteMessage(contextMenuMessageId)">Delete Message</li>
+            <li v-if="ifMyMessage(contextMenuMessageId)" @click="editMessage(contextMenuMessageId)">Edit Message</li>
+            <li v-if="ifMyMessage(contextMenuMessageId)" @click="deleteMessage(contextMenuMessageId)">Delete Message</li>
           </ul>
         </div>
       </div>

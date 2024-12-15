@@ -10,7 +10,7 @@ const router = useRouter()
     <div class="settings-list">
       <ul class="main-list">
         <li>
-          <button class="go-back" @click="router.push('chat/123')">
+          <button class="go-back" @click="router.push('/app/friends')">
             <Icon icon="material-symbols:arrow-back" /> Go back
           </button>
         </li>
@@ -24,9 +24,8 @@ const router = useRouter()
         <li>
           <ul>
             <span class="class-name">USER SETTINGS</span>
-
-            <li @click="router.push('myaccount')">My Account</li>
-            <li @click="router.push('profiles')">Profiles</li>
+            <li><router-link to="">Account</router-link></li>
+            <li><router-link to="settings/profiles">Profiles</router-link></li>
             <li>Privacy & Safety</li>
             <li>Family Centre</li>
             <li>Authorised Apps</li>

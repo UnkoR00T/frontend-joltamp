@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { dataProfileInfo } from '../../data/profile'
+import { dataUsersList } from '../../data/users';
 
-const userInfo:any = dataProfileInfo()
-
-userInfo.refreshUserInfo()
+const UsersList = dataUsersList();
 </script>
 <template>
   <div class="settings">
@@ -12,29 +10,29 @@ userInfo.refreshUserInfo()
         <img class="profile-img" src="https://via.placeholder.com/40" alt="" />
       </div>
       <div class="profile">
-        <div class="profilename">{{ userInfo.profile.displayname }}</div>
+        <div class="profilename">{{ UsersList.profile.displayname }}</div>
         <table class="main-table">
           <tr>
-            <td>{{ userInfo.profile.displayname }}</td>
+            <td>{{ UsersList.profile.displayname }}</td>
             <td></td>
           </tr>
           <tr>
-            <td>{{ userInfo.profile.username }}</td>
+            <td>{{ UsersList.profile.username }}</td>
             <td></td>
           </tr>
           <tr>
-            <td>{{ userInfo.profile.email }}</td>
+            <td>{{ UsersList.profile.email }}</td>
             <td></td>
           </tr>
           <tr>
-            <td>{{ userInfo.profile.createdat }}</td>
+            <td>{{ UsersList.profile.createdat }}</td>
             <td></td>
           </tr>
           <details>
             <summary>SHOW MORE</summary>
             <table>
               <tr>
-                <td>{{ userInfo.profile.createdat }}</td>
+                <td>{{ UsersList.profile.createdat }}</td>
                 <td>teststs</td>
               </tr>
               <tr>

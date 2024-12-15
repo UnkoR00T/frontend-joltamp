@@ -1,18 +1,17 @@
 <script setup>
 import { useRouter } from 'vue-router'
-import { dataProfileInfo } from '../../data/profile'
+import  { dataUsersList} from '../../data/users'
 
 const router = useRouter()
-const ProfileInfo = dataProfileInfo()
+const UsersList = dataUsersList()
 
-ProfileInfo.getProfileInfo()
 </script>
 
 <template>
   <div class="user-profile">
     <img src="../../../../../public/img/JoltampIcon.png" alt="Avatar" class="user-avatar" />
     <div class="user-info">
-      <h3>{{ ProfileInfo.profile.displayname }}</h3>
+      <h3>{{ UsersList.profile.displayname }}</h3>
     </div>
     <div class="user-status-icons">
       <button>

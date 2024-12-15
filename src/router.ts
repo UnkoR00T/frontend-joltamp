@@ -63,7 +63,7 @@ const router = createRouter({
               component: SettingsMyAccount
             },
             {
-              path: '/profiles',
+              path: 'profiles',
               name: 'profiles',
               component: SettingsProfiles
             }

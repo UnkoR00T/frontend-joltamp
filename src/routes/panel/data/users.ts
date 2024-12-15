@@ -1,108 +1,124 @@
 import axios from "axios";
 import { defineStore } from "pinia";
-import { useRouter } from "vue-router";
-import {ref} from "vue";
+import { ref } from "vue";
 
 export const dataUsersList = defineStore('UsersList', () => {
-  const profile = ref({})
-  const friends = ref([])
-  const users = ref([])
+  const profile = ref({});
+  const friends = ref([]);
+  const users = ref<object[]>([]);
 
-
+  let refreshingProfile: Promise<void> | null = null;
+  let refreshingFriends: Promise<void> | null = null;
+  let refreshingUser: Promise<void> | null = null;
 
   async function refreshProfileInfo() {
-    axios
-      .get(
-        `${import.meta.env.VITE_BACKEND_ADDRESS}/users/getInfo/${localStorage.getItem("userId")}`,
-      )
-      .then((res) => {
-        if (res.status == 200) {
+    if (refreshingProfile) {
+      // Jeśli zapytanie już trwa, użyj tej samej obietnicy
+      return refreshingProfile;
+    }
+
+    try {
+      refreshingProfile = axios.post(
+        `${import.meta.env.VITE_BACKEND_ADDRESS}/users/getSelfInfo`,
+        null,
+        {
+          headers: {
+            Authorization: localStorage.getItem("jwt"),
+          }
+        }
+
+      ).then((res) => {
+        if (res.status === 200) {
           profile.value = res.data;
         }
-      })
-      .catch((err) => {
-        console.log(err);
       });
+      await refreshingProfile; // Czekaj na zakończenie zapytania
+    } catch (err) {
+      console.error("Błąd podczas odświeżania informacji o profilu:", err);
+    } finally {
+      refreshingProfile = null; // Po zakończeniu wyzeruj obietnicę
+    }
   }
 
   async function refreshFriendsList() {
+    if (refreshingFriends) {
+      // Jeśli zapytanie już trwa, użyj tej samej obietnicy
+      return refreshingFriends;
+    }
 
-    return new Promise((resolve) => {
-
-
-      axios
-        .post(
-          `${import.meta.env.VITE_BACKEND_ADDRESS}/friends/`,
-          null,
-          {
-            headers: {
-              Authorization: localStorage.getItem("jwt"),
-            },
+    try {
+      refreshingFriends = axios.post(
+        `${import.meta.env.VITE_BACKEND_ADDRESS}/friends/`,
+        null,
+        {
+          headers: {
+            Authorization: localStorage.getItem("jwt"),
           },
-        )
-        .then((res) => {
-          if (res.status === 200) {
-            friends.value = res.data;
-            //console.log(friends.value);
-            resolve();
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-          resolve();
-        })
+        }
+      ).then((res) => {
+        if (res.status === 200) {
+          friends.value = res.data;
+        }
+      });
+      await refreshingFriends; // Czekaj na zakończenie zapytania
+    } catch (err) {
+      console.error("Błąd podczas odświeżania listy znajomych:", err);
+    } finally {
+      refreshingFriends = null; // Po zakończeniu wyzeruj obietnicę
+    }
+  }
+//To find unknown user
+  async function refreshUser(uuid: string) {
+    if (refreshingUser) {
+      return refreshingUser;
+    }
 
-
-
-    });
-
+    try {
+      refreshingUser = axios.get(
+        `${import.meta.env.VITE_BACKEND_ADDRESS}/users/getInfo/${uuid}`
+      ).then((res) => {
+        if (res.status === 200) {
+          users.value.push(res.data);
+        }
+      });
+      await refreshingUser; // Czekaj na zakończenie zapytania
+    } catch (err) {
+      console.error("Błąd podczas odświeżania informacji o profilu:", err);
+    } finally {
+      refreshingUser = null;
+    }
   }
 
 
-  async function getFriendsList() {
+  // Funkcja do znajdowania użytkownika
+  async function findUser(uuid: string) {
+    // Jeśli profile lub friends nie są załadowane, odśwież je
+    if (!profile.value || Object.keys(profile.value).length === 0) {
+      await refreshProfileInfo();
+    }
     if (!friends.value || friends.value.length === 0) {
       await refreshFriendsList();
     }
-  }
 
-  async function test() {
-    return new Promise((resolve) => {
-
-
-      setTimeout(() => {
-        resolve();
-      }, 1);
-
-
-
-    });
-  }
-
-  async function findUser(uuid: string) {
-    await test(); // Teraz będzie czekać na zakończenie test()
-    //console.log(profile.value);
-    //console.log(localStorage.getItem("userId"), " ", uuid)
-    //console.log(typeof localStorage.getItem("userId"), " ", typeof uuid)
-    if (!profile.value) {
-      await refreshProfileInfo();
-    }
-    if (!friends.value) {
-      await refreshFriendsList();
-    }
-
-    if(localStorage.getItem("userId") === uuid) {
-      //console.log(profile.value.displayname)
-    }
-    else if (friends.value[uuid] !== undefined) {
-      //console.log(friends.value[uuid].displayname)
-    }
-
-    if(localStorage.getItem("userId") === uuid) {
+    // Sprawdź, czy użytkownik jest aktualnie zalogowany
+    if (localStorage.getItem("userId") === uuid) {
       return profile.value;
     }
-    else if (friends.value[uuid] !== undefined) {
+    if (friends.value[uuid]){
       return friends.value[uuid];
     }
+
+    return null;
   }
-  return {findUser, getFriendsList, refreshProfileInfo, test, refreshFriendsList, profile, friends, users};
-})
+
+  // Eksport funkcji i danych
+  return {
+    findUser,
+    refreshProfileInfo,
+    refreshFriendsList,
+    refreshUser,
+    profile,
+    friends,
+    users,
+  };
+});

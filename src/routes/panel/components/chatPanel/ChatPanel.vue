@@ -10,12 +10,8 @@ import { onBeforeMount, ref, watch, onMounted, onUnmounted, nextTick } from 'vue
 // DefineStore variables
 const UsersList = dataUsersList()
 
-UsersList.refreshFriendsList()
-UsersList.refreshProfileInfo()
-
 const route = useRoute()
 
-const displayName = ref('')
 const messages = ref<any[]>([])
 
 const lastMessage = ref<any>()
@@ -34,14 +30,6 @@ const handleScroll = (event: any) => {
   if (scrollPosition >= maxScrollPosition) {
     loadMessages()
   }
-}
-
-//Getting info about user
-const getInfo = () => {
-  UsersList.findUser(route.params.id).then((user) => {
-    //console.log(user)
-    displayName.value = "test123123";
-  })
 }
 
 //Loading messages to "messages" - wrong order, not splited
@@ -85,18 +73,11 @@ const groupMessages = () => {
   lastMessage.value = {}
 
   messages.value.reverse()
-      //console.log(messages.value)
   messages.value.forEach((x, index) => {
 
-
-    //To repair
     UsersList.findUser(x.SentBy).then((user:any) => {
-      //console.log(messages.value)
-      //console.log(user.displayname, index, x.Content)
-        messages.value[messages.value.length -1 - index].displayname = user.displayname
+      messages.value[messages.value.length -1 - index].displayname = user.displayname
     })
-      //
-
 
     if (checkTimeDifferences(lastMessage.value, x) && !x.Reply) {
       messages.value[index].combineMessage = false
@@ -171,7 +152,6 @@ watch(
       if (newId !== oldId) {
         messages.value = []; // Reset messages when route id changes
         oldestMessage.value = {};
-        getInfo(); // Reset info about user
         await loadMessages();
       }
     }
@@ -202,10 +182,7 @@ const changeMessageContent = (changedMessage: any) => {
 
 //Before Mound
 onBeforeMount(() => {
-  getInfo();
   loadMessages();
-
-  UsersList.getFriendsList();
 
   setInterval(() => {
     // Trigger a re-render every minute
@@ -330,25 +307,12 @@ const deleteMessage = (deleteMessageId:String) => {
         console.error(err)
       })
 }
-
-//Before Mound
-onMounted(() => {
-  // Size of context menu
-  /*
-  const contextmenu = document.getElementById('context-menu');
-  menuWidth.value = contextmenu?.clientWidth ?? 0;
-  menuHeight.value = contextmenu?.clientHeight ?? 0;
-
-  showContextMenu.value = false
-   */
-})
-
 </script>
 <template>
   <div class="main-content">
     <div class="chat-section">
       <div class="chat-header">
-        <h3>Chat with {{ displayName }}</h3>
+        <h3>Chat with {{  }}</h3>
         <div class="chat-header-icons">
           <button class="header-icon">
             <Icon icon="mingcute:phone-call-fill" />

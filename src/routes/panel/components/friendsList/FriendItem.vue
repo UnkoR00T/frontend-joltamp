@@ -1,10 +1,19 @@
 <script setup>
-defineProps({
+import axios from 'axios'
+import { dataUsersList} from '../../data/users'
+
+const UsersList = dataUsersList();
+
+const props = defineProps({
   userId: {
     type: String,
     required: true
   },
   imgUrl: {
+    type: String,
+    required: true
+  },
+  username: {
     type: String,
     required: true
   },
@@ -19,8 +28,84 @@ defineProps({
   status: {
     type: Number,
     required: true
+  },
+  friendstatus: {
+    type: Number,
+    required: true
   }
 })
+
+const acceptFriend = () => {
+  axios
+    .post(
+      `${import.meta.env.VITE_BACKEND_ADDRESS}/friends/sendRequest`,
+      {
+        to: props.username,
+        action: true
+      },
+      {
+        headers: {
+          Authorization: localStorage.getItem('jwt')
+        }
+      }
+    )
+    .then((res) => {
+      if (res.status === 200) {
+        UsersList.refreshFriendsList()
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+const declineFriend = () => {
+  axios
+    .post(
+      `${import.meta.env.VITE_BACKEND_ADDRESS}/friends/sendRequest`,
+      {
+        to: props.username,
+        action: false
+      },
+      {
+        headers: {
+          Authorization: localStorage.getItem('jwt')
+        }
+      }
+    )
+    .then((res) => {
+      if (res.status === 200) {
+        UsersList.refreshFriendsList()
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+const deleteFriend = () => {
+  console.log(props.friendstatus, props.displayname)
+  axios
+    .post(
+      `${import.meta.env.VITE_BACKEND_ADDRESS}/friends/remove`,
+      {
+        target: props.userId,
+      },
+      {
+        headers: {
+          Authorization: localStorage.getItem('jwt')
+        }
+      }
+    )
+    .then((res) => {
+      if (res.status === 200) {
+        UsersList.refreshFriendsList()
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
 </script>
 
 <template>
@@ -45,19 +130,16 @@ defineProps({
         </div>
         <div class="options">
           <RouterLink :to="'/app/chat/' + userId">
-            <div class="option"><Icon icon="fluent:chat-48-filled" /></div>
+            <div v-if="friendstatus === 2" class="option"><Icon icon="fluent:chat-48-filled" /></div>
           </RouterLink>
 
-          <details>
-            <summary>
-              <div class="option"><Icon icon="simple-line-icons:options-vertical" /></div>
-            </summary>
-            <div class="detail">
-              <button>Block</button>
-              <button>Remove Friend</button>
-              <button>coś</button>
-            </div>
-          </details>
+          <div v-if="friendstatus === 1" @click="acceptFriend" class="option"><Icon icon="flat-color-icons:ok" /></div>
+          <div v-if="friendstatus === 1" @click="declineFriend" class="option"><Icon icon="material-symbols:cancel-outline-rounded" /></div>
+          <div v-if="friendstatus === 2" @click="deleteFriend" class="option"><Icon icon="material-symbols:delete-outline" /></div>
+          <div v-if="friendstatus === 0" @click="deleteFriend" class="option"><Icon icon="material-symbols:cancel-outline-rounded" /></div>
+
+
+          <!-- <div class="option"><Icon icon="simple-line-icons:options-vertical" /></div> -->
         </div>
 
     </div>

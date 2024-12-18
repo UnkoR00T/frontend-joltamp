@@ -477,7 +477,6 @@ onClickOutside(clickOutsideUserProfile, () => {
         <ShowProfileElement
           class="context-menu-profile"
           id="context-menu-profile"
-          style="background-color: red"
           v-if="showUserProfile.show"
           :style="{ top: `${mousePosition.y}px`, left: `${mousePosition.x}px` }"
           ref="clickOutsideUserProfile"
@@ -596,12 +595,5 @@ onClickOutside(clickOutsideUserProfile, () => {
 
 .context-menu-profile {
   position: absolute;
-  background-color: #333;
-  border: 1px solid #555;
-  border-radius: 4px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  padding: 10px;
-  z-index: 1000;
-  width: 200px;
 }
 </style>

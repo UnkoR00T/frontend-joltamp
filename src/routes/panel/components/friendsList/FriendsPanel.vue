@@ -59,11 +59,13 @@ const addFriend = () => {
         <FriendItem
           v-for="friend in UsersList.friends"
           imgUrl="../../../../public/img/JoltampIcon.png"
+          :username="friend.username"
           :userId="friend.user_id"
           :key="friend.user_id"
           :displayname="friend.displayname"
           :description="friend.desc"
           :status="friend.status"
+          :friendstatus="friend.friendstatus"
         />
       </div>
     </div>

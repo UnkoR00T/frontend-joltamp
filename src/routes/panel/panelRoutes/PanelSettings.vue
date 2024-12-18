@@ -24,8 +24,8 @@ const router = useRouter()
         <li>
           <ul>
             <span class="class-name">USER SETTINGS</span>
-            <li><router-link to="">Account</router-link></li>
-            <li><router-link to="settings/profiles">Profiles</router-link></li>
+            <li>Account</li>
+            <li>Profiles</li>
             <li>Privacy & Safety</li>
             <li>Family Centre</li>
             <li>Authorised Apps</li>

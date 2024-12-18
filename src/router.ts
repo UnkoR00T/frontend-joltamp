@@ -12,7 +12,7 @@ import PanelServer from './routes/panel/panelRoutes/PanelServer.vue'
 import PanelSettings from './routes/panel/panelRoutes/PanelSettings.vue'
 import PanelFriends from './routes/panel/panelRoutes/PanelFriends.vue'
 import SettingsMyAccount from './routes/panel/components/settingsPanel/SettingsMyAccount.vue'
-import SettingsProfiles from './routes/panel/components/settingsPanel/SettingsProfiles.vue'
+//import SettingsProfiles from './routes/panel/components/settingsPanel/SettingsProfiles.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -62,11 +62,6 @@ const router = createRouter({
               name: 'myaccount',
               component: SettingsMyAccount,
             },
-            {
-              path: 'profiles',
-              name: 'profiles',
-              component: SettingsProfiles,
-            }
           ]
         }
       ]

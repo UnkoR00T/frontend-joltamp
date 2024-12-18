@@ -3,11 +3,11 @@
     <div class="friend-item">
       <div class="friend-avatar">
         <img :src="imgUrl" alt="Friend" />
-        <Icon v-if="status == 0" style="color: silver" icon="mage:stop-circle-fill" class="icon" />
-        <Icon v-if="status == 1" style="color: green" icon="el:ok-sign" class="icon" />
-        <Icon v-if="status == 2" style="color: red" icon="oi:circle-x" class="icon" />
+        <Icon v-if="status === 0" style="color: silver" icon="mage:stop-circle-fill" class="icon" />
+        <Icon v-if="status === 1" style="color: green" icon="el:ok-sign" class="icon" />
+        <Icon v-if="status === 2" style="color: red" icon="oi:circle-x" class="icon" />
         <Icon
-          v-if="status == 3"
+          v-if="status === 3"
           style="color: orange"
           icon="line-md:moon-filled-alt-loop"
           class="icon"
@@ -15,7 +15,7 @@
       </div>
       <div class="friend-info">
         <span class="nickname">{{ username }}</span>
-        <span class="description">{{ status }} {{ description }}</span>
+        <span class="description">{{ description }}</span>
       </div>
     </div>
   </RouterLink>

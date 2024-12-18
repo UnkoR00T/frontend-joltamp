@@ -3,34 +3,11 @@ import { useRouter } from 'vue-router'
 
 import ProfileItem from '../elements/ProfileItem.vue'
 import FriendComponent from './FriendComponent.vue'
-import { onBeforeMount, ref } from 'vue'
-import axios from 'axios'
+import {dataUsersList} from '../../data/users'
+
+const UsersList = dataUsersList();
 
 const router = useRouter()
-
-const FriendsList = ref();
-
-
-onBeforeMount(async () => {
-  refreshFriends()
-})
-
-const refreshFriends = () => {
-  axios
-    .post(`${import.meta.env.VITE_BACKEND_ADDRESS}/friends/`, null, {
-      headers: {
-        Authorization: localStorage.getItem('jwt')
-      }
-    })
-    .then((res) => {
-      if (res.status == 200) {
-        FriendsList.value = res.data
-      }
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-}
 
 </script>
 
@@ -53,12 +30,12 @@ const refreshFriends = () => {
     <hr />
     <div class="friends-list">
       <FriendComponent
-        v-for="friend in FriendsList"
+        v-for="friend in UsersList.friends"
         imgUrl="../../../../public/img/JoltampIcon.png"
         :key="friend.user_id"
         :userId="friend.user_id"
         :username="friend.displayname"
-        description="None"
+        :description="friend.desc"
         :status="friend.status"
       />
     </div>

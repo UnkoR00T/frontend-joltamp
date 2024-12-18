@@ -27,10 +27,13 @@
       </button>
 
       <form @submit.prevent="sendMessage">
-        <input
+        <textarea
+          @input="adjustHeight"
+          @keydown="handleKeyDown"
+          :style="{ height: `${messageInput.height}px` }"
           type="text"
           placeholder="Type a message..."
-          v-model="messageContent"
+          v-model="messageInput.content"
         />
         <button type="submit"><Icon icon="fa:send" /></button>
       </form>
@@ -45,24 +48,21 @@
 </template>
 
 <script setup>
-import {ref} from 'vue'
+import { ref, watch } from 'vue'
 import axios from 'axios'
-import { watch } from 'vue';
 import { useRoute } from 'vue-router'
 
+const messageInput = ref({ content: "", height: 30, maxLines: 10, lineHeight: 20, minLineHeight: 30 });
+const messageToSend = ref()
 
 const route = useRoute()
-const messageContent = ref("")
-
 const OptionMessageId = ref(0)
 
 const props = defineProps({
-  //Returns message to add to ref 'message'
   addMessage: {
     type: Function,
     required: true
   },
-  //Returns mesasge to change in ref 'message'
   changeMessageContent: {
     type: Function,
     required: true
@@ -86,86 +86,108 @@ watch(
     id: props.editMessage?.MessageId,
     version: props.editMessage?.MessageTimesRepeatCount
   }),
-  (newValue, oldValue) => {
+  (newValue) => {
     if (newValue) {
       OptionMessageId.value = 1;
-      messageContent.value = props.editMessage.Content
+      messageInput.value.content = props.editMessage.Content
     }
   }
 );
 
 watch(
-    () => props.replyMessage,
-    (newValue, oldValue) => {
-      if (newValue) {
-        OptionMessageId.value = 2;
-      }
-    },
+  () => props.replyMessage,
+  (newValue) => {
+    if (newValue) {
+      OptionMessageId.value = 2;
+    }
+  },
   { deep: true }
 );
 
+const adjustHeight = () => {
+  // Obliczanie liczby linii na podstawie zawartości
+  const currentLines = messageInput.value.content.split("\n").length;
 
-const sendMessage = () => {
-  //Normal sending message additional might send a reply
-  if (OptionMessageId.value === 0 || OptionMessageId.value === 2 &&  messageContent.value){
-    axios.post(
-      `${import.meta.env.VITE_BACKEND_ADDRESS}/messages/send`,
-      {
-        target: route.params.id,
-        content: messageContent.value,
-        ...(OptionMessageId.value ? {reply: props.replyMessage.MessageId} : {})
-      }, {
-        headers: {
-          Authorization: localStorage.getItem('jwt')
-        }
-      }
-    )
-    .then(res => {
-      if (res.status === 200) {
-        props.addMessage(res.data, 0)
-        closeOptionPanel()
-      }
-    })
-    .catch((err) => {
-      console.log(err)
-      props.addMessage(res.data, 2)
-    })
-
+  // Ustawienie wysokości na podstawie liczby linii
+  if (currentLines > 1) {
+    messageInput.value.height = Math.min(messageInput.value.lineHeight * currentLines, messageInput.value.lineHeight * messageInput.value.maxLines);
+  } else {
+    messageInput.value.height = messageInput.value.minLineHeight; // minimalna wysokość
   }
-  //Editing message
-  else if(OptionMessageId.value === 1 &&  messageContent.value){
-    const changedMessage = {... props.editMessage, Content: messageContent.value};
-    axios.post(
-     `${import.meta.env.VITE_BACKEND_ADDRESS}/messages/edit`,
-      {
-      target: route.params.id,
-      sentat: changedMessage.SentAt,
-      sentattime: changedMessage.SentAtTime,
-      message: changedMessage.MessageId,
-      content: changedMessage.Content
-      },{
-       headers: {
-         Authorization: localStorage.getItem('jwt')
-       }
-      }
-    )
-    .then(res => {
-      if (res.status === 200) {
-        props.changeMessageContent(changedMessage)
-        closeOptionPanel()
-      }
-    })
-    .catch((err) => {
-      console.log(err)
-    })
+}
+//Handle key down
+const handleKeyDown = (event) => {
+  if (event.key === "Enter" && event.shiftKey) {
+
+  } else if (event.key === "Enter") {
+    messageToSend.value = messageInput.value.content;
+    messageInput.value.content = '';
+    messageInput.value.height = messageInput.value.minLineHeight;
+    sendMessage();
   }
 }
 
+//Sending message
+const sendMessage = () => {
+  // Sprawdzanie, czy wiadomość nie jest pusta
+  if (messageToSend.value && messageToSend.value.trim().length > 0) {
+    // Normalne wysyłanie wiadomości (z możliwością odpowiedzi)
+    if (OptionMessageId.value === 0 || (OptionMessageId.value === 2 && messageToSend.value)) {
+      axios.post(
+        `${import.meta.env.VITE_BACKEND_ADDRESS}/messages/send`,
+        {
+          target: route.params.id,
+          content: messageToSend.value,
+          ...(OptionMessageId.value ? { reply: props.replyMessage.MessageId } : {})
+        }, {
+          headers: {
+            Authorization: localStorage.getItem('jwt')
+          }
+        }
+      )
+        .then(res => {
+          if (res.status === 200) {
+            props.addMessage(res.data, 0)
+            closeOptionPanel()
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          props.addMessage(res.data, 2)
+        })
+    }
+    // Edytowanie wiadomości
+    else if (OptionMessageId.value === 1 && messageToSend.value) {
+      const changedMessage = { ...props.editMessage, Content: messageToSend.value };
+      axios.post(
+        `${import.meta.env.VITE_BACKEND_ADDRESS}/messages/edit`,
+        {
+          target: route.params.id,
+          sentat: changedMessage.SentAt,
+          sentattime: changedMessage.SentAtTime,
+          message: changedMessage.MessageId,
+          content: messageToSend.value,
+        }, {
+          headers: {
+            Authorization: localStorage.getItem('jwt')
+          }
+        }
+      ).then((res) => {
+        if (res.status === 200) {
+          props.changeMessageContent(changedMessage)
+          closeOptionPanel()
+        }
+        }).catch((err) => {
+          console.log(err)
+        })
+    }
+  }
+}
 
-//Close panel on the top of chat
+// Zamykanie panelu opcji
 const closeOptionPanel = () => {
   OptionMessageId.value = 0
-  messageContent.value = '';
+  messageInput.value.content = '';
 }
 </script>
 
@@ -233,7 +255,8 @@ const closeOptionPanel = () => {
       display: flex;
     }
 
-    input {
+    textarea {
+      resize: none;
       flex: 1;
       padding: 0.5rem;
       border: none;
@@ -243,6 +266,7 @@ const closeOptionPanel = () => {
     }
 
     button[type="submit"] {
+      max-height: 30px;
       padding: 0.5rem;
       background-color: #7289da;
       border: none;

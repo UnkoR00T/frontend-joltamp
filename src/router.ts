@@ -20,17 +20,17 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: WelcomeView
+      component: WelcomeView,
     },
     {
       path: '/register',
       name: 'register',
-      component: RegisterSite
+      component: RegisterSite,
     },
     {
       path: '/login',
       name: 'login',
-      component: LoginSite
+      component: LoginSite,
     },
     {
       path: '/app',
@@ -40,17 +40,17 @@ const router = createRouter({
         {
           path: 'chat/:id',
           name: 'chat',
-          component: PanelChat
+          component: PanelChat,
         },
         {
           path: 'friends',
           name: 'friends',
-          component: PanelFriends
+          component: PanelFriends,
         },
         {
           path: 'server',
           name: 'server',
-          component: PanelServer
+          component: PanelServer,
         },
         {
           path: 'settings',
@@ -60,12 +60,12 @@ const router = createRouter({
             {
               path: '',
               name: 'myaccount',
-              component: SettingsMyAccount
+              component: SettingsMyAccount,
             },
             {
               path: 'profiles',
               name: 'profiles',
-              component: SettingsProfiles
+              component: SettingsProfiles,
             }
           ]
         }
@@ -74,7 +74,7 @@ const router = createRouter({
     {
       path: '/:pathMatch(.*)*',
       name: '404',
-      component: NotFoundSite
+      component: NotFoundSite,
     }
   ]
 })

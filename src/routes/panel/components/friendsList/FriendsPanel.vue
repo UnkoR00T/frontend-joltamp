@@ -2,30 +2,10 @@
 import { onBeforeMount, onMounted, ref } from 'vue'
 import FriendItem from './FriendItem.vue'
 import axios from 'axios'
+import { dataUsersList } from '../../data/users'
 
-const FriendsList = ref()
-
-onBeforeMount(async () => {
-  refreshFriends()
-})
-
-const refreshFriends = () => {
-  axios
-    .post(`${import.meta.env.VITE_BACKEND_ADDRESS}/friends/`, null, {
-      headers: {
-        Authorization: localStorage.getItem('jwt')
-      }
-    })
-    .then((res) => {
-      if (res.status == 200) {
-        FriendsList.value = res.data
-      }
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-}
-
+const UsersList = dataUsersList()
+//Adding new friend:
 const addFriendName = ref('')
 const addFriend = () => {
   axios
@@ -42,8 +22,8 @@ const addFriend = () => {
       }
     )
     .then((res) => {
-      if (res.status == 200) {
-        refreshFriends()
+      if (res.status === 200) {
+        UsersList.refreshFriendsList()
       }
     })
     .catch((err) => {
@@ -77,12 +57,12 @@ const addFriend = () => {
       <div class="friends-count">ONLINE -</div>
       <div class="friends-list">
         <FriendItem
-          v-for="(friend, key) in FriendsList"
+          v-for="friend in UsersList.friends"
           imgUrl="../../../../public/img/JoltampIcon.png"
           :userId="friend.user_id"
-          v-bind:key="key"
-          v-bind:displayname="friend.displayname"
-          :description="None"
+          :key="friend.user_id"
+          :displayname="friend.displayname"
+          :description="friend.desc"
           :status="friend.status"
         />
       </div>
@@ -156,6 +136,7 @@ const addFriend = () => {
 
     .find-friend {
       padding: 7px;
+      display: flex;
 
       input {
         background-color: #282828;
@@ -168,6 +149,13 @@ const addFriend = () => {
 
       input:focus {
         outline: none;
+      }
+
+      button{
+        background-color: rgb(1, 151, 1);
+        color: white;
+        padding: 10px;
+        font-weight: bold;
       }
     }
 

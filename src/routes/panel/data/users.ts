@@ -57,6 +57,7 @@ export const dataUsersList = defineStore('UsersList', () => {
         }
       ).then((res) => {
         if (res.status === 200) {
+          console.log(res.data)
           friends.value = res.data;
         }
       });

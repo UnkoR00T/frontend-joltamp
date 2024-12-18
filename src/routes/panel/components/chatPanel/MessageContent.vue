@@ -9,24 +9,24 @@
     <div class="message-reply" v-if="reply">
       <span class="replyIcon">╭━</span>
       <img class="replyAvatar" src="https://via.placeholder.com/40" alt="img">
-      <span class="replyNickname">@{{reply.TargetId}}</span>
+      <span class="replyNickname">@{{reply.displayname}}</span>
       <a :href="'#' + reply.MessageId">{{reply.Content}}</a>
     </div>
     <div class="message-container">
 
 
-      <div class="message-avatar">
+      <div @click="openProfileMenu($event)" class="message-avatar">
         <img v-if="combineMessage" :src="imgUrl" alt="Avatar" />
       </div>
       <div class="message-body">
         <div v-if="combineMessage" class="message-sender">
-          <span class="message-nickname">
+          <span @click="openProfileMenu($event)" class="message-nickname">
             {{ nickname }}
           </span>
           <span class="message-sent-date">{{ sentDate }}</span>
         </div>
         <span class="message-content" :class="dynamicStatusClass">
-          {{ content }}
+          <span class="content" v-html="formattedContent"></span>
           <span class="ifEdited" v-if="edited">(edited)</span>
         </span>
       </div>
@@ -45,8 +45,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-
+import { ref, watch } from 'vue'
+import { dataUsersList} from '../../data/users'
+import ShowProfileElement from './ShowProfileElement.vue'
+const UsersList = dataUsersList();
 
 const showButtons = ref(false);
 const dynamicStatusClass = ref("test")
@@ -61,10 +63,56 @@ const props = defineProps({
   content: { type: String, required: true },
   combineMessage: { type: Boolean, required: true },
   edited: {type: Boolean, default: false, required: false},
+  sentBy: { type: String, required: true },
+  showUserProfile: {type: Function, required: true},
 });
 
+const formattedContent = ref()
+
+const openProfileMenu = (event) => {
+  props.showUserProfile(event.clientX, event.clientY, props.sentBy);
+  console.log("open")
+}
+
+const formatContent = () =>{
+  formattedContent.value = props.content    // Zamiana nowych linii na <br>
+    .replace(/\n/g, '<br>')
+    // Bold + italic: ***text***
+    .replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>')
+    // Bold: **text**
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    // Italic: *text*
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    // Underline: __text__
+    .replace(/__(.*?)__/g, '<u>$1</u>')
+    // Strikethrough: ~~text~~
+    .replace(/~~(.*?)~~/g, '<s>$1</s>')
+    // Code block: ```text```
+    .replace(/```([\s\S]*?)```/g, '<pre><code style="display: block; overflow-wrap: break-word; white-space: normal; background-color: #353535; max-width: 100%; padding: 5px; border: 1px solid black; border-radius: 5px; font-size: 14px; width: 100%; box-sizing: border-box; margin: 0; ">$1</code></pre>')
+
+
+
+
+
+
+    // Inline code: `text`
+    .replace(/`(.*?)`/g, '<code>$1</code>');
+}
+
+watch(
+  () => props.content,
+  (newValue) => {
+    if (newValue) {
+      formatContent()
+    }
+  },
+  { deep: true }
+);
+
+formatContent()
+
+
 if (props.sendStatus === 0) {
-  console.log("statusok")
   dynamicStatusClass.value = 'statusOK';
 } else if (props.sendStatus === 1) {
   console.log("status waiting")
@@ -142,7 +190,7 @@ if (props.sendStatus === 0) {
     }
 
     .message-body {
-      width: 100%;
+      width: calc(100% - 55px);
 
       .message-sender {
         margin-bottom: 2px;
@@ -175,12 +223,14 @@ if (props.sendStatus === 0) {
         display: block;
         overflow-wrap: break-word;
         white-space: normal;
+        max-width: 100%;
 
-        .ifEdited{
+        .ifEdited {
           font-size: 10px;
           color: #999;
           user-select: none;
         }
+
       }
 
       .statusOK{
@@ -221,6 +271,11 @@ if (props.sendStatus === 0) {
 
   &:hover {
     background-color: #00000015;
+  }
+
+  .showProfileElement{
+    position: absolute;
+    left: 50px;
   }
 
 }

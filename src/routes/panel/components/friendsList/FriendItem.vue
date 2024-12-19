@@ -129,7 +129,7 @@ const deleteFriend = () => {
           <span class="description">{{ description }}</span>
         </div>
         <div class="options">
-          <RouterLink :to="'/app/chat/' + userId">
+        <RouterLink :to="'/app/chat/' + userId">
             <div v-if="friendstatus === 2" class="option"><Icon icon="fluent:chat-48-filled" /></div>
           </RouterLink>
 

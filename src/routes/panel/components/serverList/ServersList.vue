@@ -1,6 +1,6 @@
 <template>
   <div class="servers">
-    <div class="main-icon"><img src="../../img/JoltAmpIco.png" alt="Main icon" /></div>
+    <div class="main-icon"><img src="../../img/JoltampIcon.png  " alt="Main icon" /></div>
     <ServerComponent imgUrl="../../img/JoltampIcon.png" :active="true" />
     <ServerComponent imgUrl="../../img/JoltampIcon.png" :active="false" />
     <ServerComponent imgUrl="../../img/JoltampIcon.png" :active="false" />
@@ -41,7 +41,7 @@ import ServerComponent from './ServerComponent.vue'
 
     &:hover {
       transform: scale(1.1) rotate(1turn);
-      box-shadow: 0 0 5px 2px #99110c;
+      box-shadow: 0 0 5px 2px #76bdff;
     }
   }
 

@@ -73,9 +73,32 @@ const changeSelfInfo = (type: string, newValue: string) => {
     });
 
   // Reset the field value after successful update
-  selfInfo.value[type] = ''; // Correctly reset the field value
-  console.log(UsersList.profile);
 }
+/*
+const fileInput = ref<HTMLInputElement | null>(null);
+const setProfile = () => {
+  axios
+    .post(
+      `${import.meta.env.VITE_BACKEND_ADDRESS}/users/changeSelfInfo`,
+      fileInput.value,
+      {
+        headers: {
+          Authorization: localStorage.getItem('jwt')
+        }
+      }
+    )
+    .then((res) => {
+      if (res.status === 200) {
+        UsersList.refreshProfileInfo();
+        UsersList.getProfile(UsersList.profile.user_id)
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+ */
 </script>
 
 <template>
@@ -128,11 +151,15 @@ const changeSelfInfo = (type: string, newValue: string) => {
             <table>
               <tr>
                 <td>Baner Color:</td>
-                <td>{{ UsersList.profile.bannercolor }}</td>
+                <td>
+                  <div style="height: 15px; width: 30px;" :style="{backgroundColor: UsersList.profile.bannercolor}"></div>
+                </td>
               </tr>
               <tr>
                 <td>Background color:</td>
-                <td>{{ UsersList.profile.backgroundcolor }}</td>
+                <td>
+                  <div style="height: 15px; width: 30px;" :style="{backgroundColor: UsersList.profile.backgroundcolor}"></div>
+                </td>
               </tr>
               <tr>
                 <td>Badges:</td>
@@ -187,7 +214,7 @@ const changeSelfInfo = (type: string, newValue: string) => {
       <div class="options-all">
         <span class="options-title">Change bannercolor:</span>
         <form @submit.prevent="changeSelfInfo('bannercolor', selfInfo.bannercolor)">
-          <input type="text" v-model="selfInfo.bannercolor" />
+          <input type="color" v-model="selfInfo.bannercolor" />
           <button type="submit"><Icon class="icon" icon="material-symbols:save" /></button>
         </form>
       </div>
@@ -195,7 +222,7 @@ const changeSelfInfo = (type: string, newValue: string) => {
       <div class="options-all">
         <span class="options-title">Change background color:</span>
         <form @submit.prevent="changeSelfInfo('backgroundcolor', selfInfo.backgroundcolor)">
-          <input type="text" v-model="selfInfo.backgroundcolor" />
+          <input type="color" v-model="selfInfo.backgroundcolor" />
           <button type="submit"><Icon class="icon" icon="material-symbols:save" /></button>
         </form>
       </div>
@@ -207,6 +234,14 @@ const changeSelfInfo = (type: string, newValue: string) => {
           <button type="submit"><Icon class="icon" icon="material-symbols:save" /></button>
         </form>
       </div>
+
+      <!--<div class="options-all">
+        <span class="options-title">Change avatar:</span>
+        <form @submit.prevent="setProfile()">
+          <input type="file" ref="fileInput" />
+          <button type="submit"><Icon class="icon" icon="material-symbols:save" /></button>
+        </form>
+      </div>-->
 
     </div>
   </div>

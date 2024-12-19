@@ -2,8 +2,32 @@ import axios from "axios";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-export const dataUsersList = defineStore('UsersList', () => {
-  const profile = ref({});
+export const dataUsersList = defineStore("UsersList", () => {
+  const profile = ref<{
+    backgroundcolor: string;
+    badges: string | null;
+    bannercolor: string;
+    createdat: string;
+    desc: string;
+    displayname: string;
+    email: string;
+    profile: string; // Assuming it's a base64-encoded image
+    status: number;
+    user_id: string;
+    username: string;
+  }>({
+    backgroundcolor: "",
+    badges: null,
+    bannercolor: "",
+    createdat: "",
+    desc: "",
+    displayname: "",
+    email: "",
+    profile: "",
+    status: 0,
+    user_id: "",
+    username: "",
+  });
   const friends = ref([]);
   const users = ref<object[]>([]);
 
@@ -18,20 +42,22 @@ export const dataUsersList = defineStore('UsersList', () => {
     }
 
     try {
-      refreshingProfile = axios.post(
-        `${import.meta.env.VITE_BACKEND_ADDRESS}/users/getSelfInfo`,
-        null,
-        {
-          headers: {
-            Authorization: localStorage.getItem("jwt"),
+      refreshingProfile = axios
+        .post(
+          `${import.meta.env.VITE_BACKEND_ADDRESS}/users/getSelfInfo`,
+          null,
+          {
+            headers: {
+              Authorization: localStorage.getItem("jwt"),
+            },
+          },
+        )
+        .then((res) => {
+          if (res.status === 200) {
+            profile.value = res.data;
+            console.log(profile.value);
           }
-        }
-
-      ).then((res) => {
-        if (res.status === 200) {
-          profile.value = res.data;
-        }
-      });
+        });
       await refreshingProfile; // Czekaj na zakończenie zapytania
     } catch (err) {
       console.error("Błąd podczas odświeżania informacji o profilu:", err);
@@ -47,20 +73,18 @@ export const dataUsersList = defineStore('UsersList', () => {
     }
 
     try {
-      refreshingFriends = axios.post(
-        `${import.meta.env.VITE_BACKEND_ADDRESS}/friends/`,
-        null,
-        {
+      refreshingFriends = axios
+        .post(`${import.meta.env.VITE_BACKEND_ADDRESS}/friends/`, null, {
           headers: {
             Authorization: localStorage.getItem("jwt"),
           },
-        }
-      ).then((res) => {
-        if (res.status === 200) {
-          console.log(res.data)
-          friends.value = res.data;
-        }
-      });
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            console.log(res.data);
+            friends.value = res.data;
+          }
+        });
       await refreshingFriends; // Czekaj na zakończenie zapytania
     } catch (err) {
       console.error("Błąd podczas odświeżania listy znajomych:", err);
@@ -68,20 +92,20 @@ export const dataUsersList = defineStore('UsersList', () => {
       refreshingFriends = null; // Po zakończeniu wyzeruj obietnicę
     }
   }
-//To find unknown user
+  //To find unknown user
   async function refreshUser(uuid: string) {
     if (refreshingUser) {
       return refreshingUser;
     }
 
     try {
-      refreshingUser = axios.get(
-        `${import.meta.env.VITE_BACKEND_ADDRESS}/users/getInfo/${uuid}`
-      ).then((res) => {
-        if (res.status === 200) {
-          users.value.push(res.data);
-        }
-      });
+      refreshingUser = axios
+        .get(`${import.meta.env.VITE_BACKEND_ADDRESS}/users/getInfo/${uuid}`)
+        .then((res) => {
+          if (res.status === 200) {
+            users.value.push(res.data);
+          }
+        });
       await refreshingUser; // Czekaj na zakończenie zapytania
     } catch (err) {
       console.error("Błąd podczas odświeżania informacji o profilu:", err);
@@ -90,6 +114,24 @@ export const dataUsersList = defineStore('UsersList', () => {
     }
   }
 
+  // const getProfile = async (uuid: string) => {
+  //   // Wykonanie zapytania do API
+  //   await axios.get(
+  //     `${import.meta.env.VITE_BACKEND_ADDRESS}/users/getInfo/${uuid}`,
+  //     {
+  //       params: { profile: true },
+  //     }
+  //   ).then((response) => {
+  //     if (response.status === 200 && response.data) {
+  //       // @ts-ignore
+  //       users.value[uuid].profile = response.data.profile;
+  //     } else {
+  //       console.warn("Nieoczekiwany status odpowiedzi:", response.status);
+  //     }
+  //   }).catch((err) => {
+  //     console.log(err)
+  //   })
+  // }
 
   // Funkcja do znajdowania użytkownika
   async function findUser(uuid: string) {
@@ -105,7 +147,9 @@ export const dataUsersList = defineStore('UsersList', () => {
     if (localStorage.getItem("userId") === uuid) {
       return profile.value;
     }
-    if (friends.value[uuid]){
+    // @ts-ignore
+    if (friends.value[uuid]) {
+      //@ts-ignore
       return friends.value[uuid];
     }
 

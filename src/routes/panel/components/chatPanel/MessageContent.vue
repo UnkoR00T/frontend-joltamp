@@ -32,11 +32,11 @@
       </div>
 
       <!-- Button delete and edit -->
-      <div class="message-actions" v-if="showButtons">
+      <!--<div class="message-actions" v-if="showButtons">
         <button @click="editMessage"><Icon icon="wpf:edit" /></button>
         <button @click="deleteMessage"><Icon icon="fa6-solid:reply" /></button>
         <button @click="deleteMessage"><Icon icon="mingcute:delete-2-line" /></button>
-      </div>
+      </div>-->
 
     </div>
 

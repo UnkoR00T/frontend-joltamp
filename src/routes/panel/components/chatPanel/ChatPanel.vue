@@ -15,6 +15,7 @@ import {
   onUnmounted,
   nextTick,
 } from "vue";
+import { useWebsockets } from '../../data/websocket.ts'
 
 // DefineStore variables
 const UsersList = dataUsersList();
@@ -27,7 +28,96 @@ const chatWith = ref<string>();
 const lastMessage = ref<any>();
 const oldestMessage = ref<any>(0);
 
+const ws = useWebsockets();
+
+const wsEventListener = async (msg: {
+  type: string;
+  payload: { [key: string]: any };
+}) => {
+  if (
+    msg.payload?.TargetId &&
+    msg.payload.TargetId ==
+    combineUUIDs(
+      route.params.id as string,
+      localStorage.getItem("userId") as string,
+    )
+  ) {
+    console.log("Passed");
+    if (msg.type === "new_message") {
+      const payload = msg.payload as {
+        ServerId: string;
+        TargetId: string;
+        SentAt: string;
+        SentAtTime: number;
+        MessageId: string;
+        Content: string;
+        Edited: boolean;
+        Reactions: any;
+        Reply: string;
+        SentBy: string;
+        ReplyBody: {
+          ServerId: string;
+          TargetId: string;
+          SentAt: string;
+          SentAtTime: number;
+          MessageId: string;
+          Content: string;
+          Edited: boolean;
+          Reactions: any;
+          SentBy: string;
+          [key: string]: any;
+        };
+        [key: string]: any;
+      };
+      messages.value.unshift({
+        ...payload,
+        sendStatus: 0,
+        displayname: (await UsersList.findUser(payload.SentBy)).displayname,
+        combineMessage: !checkTimeDifferences(lastMessage.value, payload),
+      });
+      lastMessage.value = msg.payload;
+    } else if (msg.type === "edit_message") {
+      const payload = msg.payload as {
+        ServerId: string; // Represents the server ID (string)
+        TargetId: string; // Represents the target ID (string)
+        SentAt: string; // ISO 8601 date format (string)
+        SentAtTime: number; // Unix timestamp in milliseconds (number)
+        MessageId: string; // Unique message identifier (string)
+        Content: string; // The message content (string)
+        [key: string]: any;
+      };
+      const findMsg = messages.value.find(
+        (x) =>
+          x.MessageId == payload.MessageId && x.TargetId == payload.TargetId,
+      );
+      if (findMsg) {
+        findMsg.Content = payload.Content;
+        findMsg.Edited = true;
+      }
+    } else if (msg.type === "delete_message"){
+      const payload = msg.payload as {
+        ServerId: string; // Represents the server ID (string)
+        TargetId: string; // Represents the target ID (string)
+        MessageId: string; // Unique message identifier (string)
+        SentAt: string; // ISO 8601 date format (string)
+        SentAtTime: number; // Unix timestamp in milliseconds (number)
+        [key: string]: any;
+      }
+      messages.value = messages.value.filter(x => x.MessageId !== payload.MessageId)
+    }
+  }
+};
+
+ws.addMessageListener(wsEventListener);
+
 // Functions:
+
+function combineUUIDs(uuid1: string, uuid2: string): string {
+  // Ensure alphabetical order
+  const [first, second] = [uuid1, uuid2].sort();
+  // Return combined UUIDs
+  return `${first}_${second}`;
+}
 
 //Chat with function
 
@@ -146,7 +236,7 @@ function timeAgo(timestamp: number) {
     return `${year}/${month}/${day} at ${hours}:${minutes}`;
   };
 
-  const formatWithTime = (timeAgo: number) => {
+  const formatWithTime = (timeAgo: string | number) => {
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
     return `${timeAgo} at ${hours}:${minutes}`;
@@ -348,10 +438,37 @@ const deleteMessage = (deleteMessageId: String) => {
       console.error(err);
     });
 };
+interface User {
+  show: boolean;
+  user: {
+    friendstatus: number;
+    createdat: string;
+    user_id: string;
+    username: string;
+    badges: string[] | null;
+    displayname: string;
+    bannercolor: string;
+    backgroundcolor: string;
+    status: number;
+    desc: string;
+    [key: string]: any;
+  }
+}
 
-const showUserProfile = ref<{ show: boolean; user: object }>({
+const showUserProfile = ref<User>({
   show: false,
-  user: {},
+  user: {
+    friendstatus: 0,
+    createdat: "",
+    user_id: "",
+    username: "",
+    badges: null,
+    displayname: "",
+    bannercolor: "",
+    backgroundcolor: "",
+    status: 0,
+    desc: "",
+  },
 });
 
 const showUserProfileMenu = async (

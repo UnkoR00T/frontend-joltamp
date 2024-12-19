@@ -1,4 +1,3 @@
-import WelcomeView from './routes/welcome/WelcomeView.vue'
 import RegisterSite from './routes/register/RegisterSite.vue'
 import LoginSite from './routes/login/LoginSite.vue'
 import { createRouter, createWebHistory } from 'vue-router'
@@ -12,7 +11,9 @@ import PanelServer from './routes/panel/panelRoutes/PanelServer.vue'
 import PanelSettings from './routes/panel/panelRoutes/PanelSettings.vue'
 import PanelFriends from './routes/panel/panelRoutes/PanelFriends.vue'
 import SettingsMyAccount from './routes/panel/components/settingsPanel/SettingsMyAccount.vue'
-//import SettingsProfiles from './routes/panel/components/settingsPanel/SettingsProfiles.vue'
+import MainView from './routes/welcome/views/mainView.vue'
+import DownloadView from './routes/welcome/views/downloadView.vue'
+import StatusView from './routes/welcome/views/statusView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,7 +21,17 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: WelcomeView,
+      component: MainView,
+    },
+    {
+      path: '/download',
+      name: 'download',
+      component: DownloadView
+    },
+    {
+      path: '/status',
+      name: 'status',
+      component: StatusView
     },
     {
       path: '/register',

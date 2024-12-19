@@ -176,13 +176,13 @@ const changeSelfInfo = (type: string, newValue: string) => {
         </form>
       </div>
 
-      <div class="options-all">
+      <!--<div class="options-all">
         <span class="options-title">Change username:</span>
         <form @submit.prevent="changeSelfInfo('username', selfInfo.username)">
           <input type="text" v-model="selfInfo.username" />
           <button type="submit"><Icon class="icon" icon="material-symbols:save" /></button>
         </form>
-      </div>
+      </div>-->
 
       <div class="options-all">
         <span class="options-title">Change bannercolor:</span>

@@ -1,0 +1,118 @@
+{
+  "buttons": {
+    "logout" : {
+      "title" : "Log out"
+    }
+  },
+  "components": {
+    "chatPanel": {
+      "chatwith": "Chat with",
+      "addreaction": "Add reaction",
+      "reply": "Reply",
+      "editmessage": "Edit message",
+      "deletemessage": "Delete message",
+      "editingmessage": "Editing message",
+      "replyingmessage": "Replying message",
+      "inputplaceholder": "Type a message",
+      "profilesendmessage": "Send message"
+    },
+    "elements": {
+
+    },
+    "friendsList": {
+      "online" : "Online",
+      "all": "All",
+      "pending": "Pending",
+      "blocked": "Blocked",
+      "addfriend": "Add friend",
+      "sendrequest": "Add Friend"
+    },
+    "friendsSidebar": {
+      "findfriendplaceholder": "Find friend",
+      "friends": "Friends",
+      "nitro": "Nitro",
+      "shop": "Shop"
+    },
+    "serverChannels": {
+
+    },
+    "serverChatPanel": {
+
+    },
+    "serverList": {
+
+    },
+    "settingsPanel": {
+      "goback": "Go back",
+
+      "usersettings": "USER SETTINGS",
+      "paymentsettings": "PAYMENT SETTINGS",
+      "appsettings": "APP SETTINGS",
+      "activitysettings": "ACTIVITY SETTINGS",
+      "othersettings": "OTHER",
+
+      "settingsmyaccount": {
+        "title": "My Account",
+        "displayname": "Display Name",
+        "username": "Username",
+        "description": "Description",
+        "email": "Email",
+        "createdata": "Created data",
+        "status": "Status",
+        "showmore": "SHOWMORE",
+        "bannercolor": "Bamenr color",
+        "backgroundcolor": "Background Color",
+        "badges": "Badges",
+        "setstatus": "Set Status",
+        "0": "Invisible",
+        "1": "Active",
+        "2": "Do not disturb",
+        "3": "Idle",
+        "changedescription": "Changed description",
+        "changedisplayname": "Change displayname",
+        "changebannercolor": "Change banner color",
+        "changebackgroundcolor": "Change background color",
+        "changeemail": "Change email address"
+      },
+      "settingsdevices": {
+        "title": "Devices"
+      },
+      "settingsfriendrequests": {
+        "title": "Friend Requests"
+      },
+      "settingsnitro": {
+        "title": "Nitro"
+      },
+      "settingsgiftinventory": {
+        "title": "Gift Inventory"
+      },
+      "settingsappearance": {
+        "title": "Appearance"
+      },
+      "settingsvoiceandvideo": {
+        "title": "Voice & Video"
+      },
+      "settingschat": {
+        "title": "Chat"
+      },
+      "settingsnotifications": {
+        "title": "Notifications"
+      },
+      "settingskeybinds": {
+        "title": "Keybinds"
+      },
+      "settingslanguage": {
+        "title": "Language"
+      },
+      "settingsadvanced": {
+        "title": "Advanced"
+      },
+      "settingsactivityandprivacy": {
+        "title": "Activity & Privacy"
+      },
+      "settingswhatsnew": {
+        "title": "What's new"
+      }
+    }
+  }
+}

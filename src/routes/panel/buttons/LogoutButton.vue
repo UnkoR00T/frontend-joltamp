@@ -9,7 +9,7 @@ const logout = () => {
 </script>
 
 <template>
-  <button @click="logout"><Icon icon="solar:logout-3-bold" /> Log Out</button>
+  <button @click="logout"><Icon icon="solar:logout-3-bold" />{{  $t('buttons.logout.title') }}</button>
 </template>
 
 <style lang="scss" scoped>

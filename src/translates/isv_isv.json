@@ -1,0 +1,118 @@
+{
+  "buttons": {
+    "logout": {
+      "title": "Vijti"
+    }
+  },
+  "components": {
+    "chatPanel": {
+      "chatwith": "Govoriti s",
+      "addreaction": "Dodati reakciju",
+      "reply": "Odgovoriti",
+      "editmessage": "Redaktovati poruku",
+      "deletemessage": "Udaliti poruku",
+      "editingmessage": "Redaktovanje poruke",
+      "replyingmessage": "Odgovaranje na poruku",
+      "inputplaceholder": "Pisať poruku",
+      "profilesendmessage": "Poslati poruku"
+    },
+    "elements": {
+
+    },
+    "friendsList": {
+      "online": "Na liniji",
+      "all": "Vsě",
+      "pending": "Očekajuči",
+      "blocked": "Blokovani",
+      "addfriend": "Dodati prijatelja",
+      "sendrequest": "Dodati prijatelja"
+    },
+    "friendsSidebar": {
+      "findfriendplaceholder": "Najsći prijatelja",
+      "friends": "Prijatelji",
+      "nitro": "Nitro",
+      "shop": "Magazin"
+    },
+    "serverChannels": {
+
+    },
+    "serverChatPanel": {
+
+    },
+    "serverList": {
+
+    },
+    "settingsPanel": {
+      "goback": "Nazad",
+
+      "usersettings": "NASTAVLENJA UŽIVATELA",
+      "paymentsettings": "NASTAVLENJA PLATENJA",
+      "appsettings": "NASTAVLENJA APLIKACIJE",
+      "activitysettings": "NASTAVLENJA AKTIVNOSTI",
+      "othersettings": "DRUGO",
+
+      "settingsmyaccount": {
+        "title": "Moja konta",
+        "displayname": "Pokazane imę",
+        "username": "Imę uživatelja",
+        "description": "Opis",
+        "email": "Email",
+        "createdata": "Datum stvorenja",
+        "status": "Status",
+        "showmore": "VIŠE",
+        "bannercolor": "Cvět banera",
+        "backgroundcolor": "Cvět pozadja",
+        "badges": "Znački",
+        "setstatus": "Ustaviť status",
+        "0": "Nevidimy",
+        "1": "Aktivny",
+        "2": "Neprěščenjivati",
+        "3": "Neaktivan",
+        "changedescription": "Změniti opis",
+        "changedisplayname": "Změniti pokazane imę",
+        "changebannercolor": "Změniti cvět banera",
+        "changebackgroundcolor": "Změniti cvět pozadja",
+        "changeemail": "Změniti email adresu"
+      },
+      "settingsdevices": {
+        "title": "Pribory"
+      },
+      "settingsfriendrequests": {
+        "title": "Zaprosenja za prijateljstvo"
+      },
+      "settingsnitro": {
+        "title": "Nitro"
+      },
+      "settingsgiftinventory": {
+        "title": "Inventar darov"
+      },
+      "settingsappearance": {
+        "title": "Vid"
+      },
+      "settingsvoiceandvideo": {
+        "title": "Golos i video"
+      },
+      "settingschat": {
+        "title": "Čat"
+      },
+      "settingsnotifications": {
+        "title": "Upozorjenja"
+      },
+      "settingskeybinds": {
+        "title": "Ključevi"
+      },
+      "settingslanguage": {
+        "title": "Język"
+      },
+      "settingsadvanced": {
+        "title": "Napredne"
+      },
+      "settingsactivityandprivacy": {
+        "title": "Aktivnost i privatsnost"
+      },
+      "settingswhatsnew": {
+        "title": "Čto novogo"
+      }
+    }
+  }
+}

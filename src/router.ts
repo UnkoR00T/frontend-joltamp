@@ -11,9 +11,11 @@ import PanelServer from './routes/panel/panelRoutes/PanelServer.vue'
 import PanelSettings from './routes/panel/panelRoutes/PanelSettings.vue'
 import PanelFriends from './routes/panel/panelRoutes/PanelFriends.vue'
 import SettingsMyAccount from './routes/panel/components/settingsPanel/SettingsMyAccount.vue'
+import SettingsLanguages from './routes/panel/components/settingsPanel/SettingsLanguages.vue'
 import MainView from './routes/welcome/views/mainView.vue'
 import DownloadView from './routes/welcome/views/downloadView.vue'
 import StatusView from './routes/welcome/views/statusView.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -69,9 +71,14 @@ const router = createRouter({
           component: PanelSettings,
           children: [
             {
-              path: '',
+              path: 'myaccount',
               name: 'myaccount',
               component: SettingsMyAccount,
+            },
+            {
+              path: 'languages',
+              name: 'languages',
+              component: SettingsLanguages,
             },
           ]
         }

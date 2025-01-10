@@ -13,7 +13,7 @@ const errorData = ref('')
 
 const usernameValidPattern = /^[a-zA-Z0-9!@#$%]*$/
 const emailValidPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const passwordValidPattern = /^(?=.*[0-9])(?=.*[!@#$%])[a-zA-Z0-9!@#$%]*$/
+const passwordValidPattern = /^(?=.*[0-9])(?=.*[!@#$%^&*:,.~()<>=+_])[a-zA-Z0-9!@#$%^&*:,.~()<>=+_]*$/
 
 function addErrorClass(target: HTMLInputElement, ifCorrect: boolean) {
   if (ifCorrect) {

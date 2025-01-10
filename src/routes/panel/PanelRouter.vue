@@ -12,6 +12,6 @@ UsersList.refreshProfileInfo()
 
 <template>
   <RouterView />
-</template>//Websocket.wsConnect()
+</template>
 
 <style scoped></style>

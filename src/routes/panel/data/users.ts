@@ -28,7 +28,20 @@ export const dataUsersList = defineStore("UsersList", () => {
     user_id: "",
     username: "",
   });
-  const friends = ref([]);
+  const friends = ref<
+      {
+        backgroundcolor: string;
+        badges: null;
+        bannerColor: string;
+        createdAt: string; // ISO 8601 date format
+        desc: string;
+        displaname: string;
+        friendstatus: number;
+        status: number;
+        userId: string; // UUID format
+        username: string;
+      }[]
+  >([]);
   const users = ref<object[]>([]);
 
   let refreshingProfile: Promise<void> | null = null;
@@ -55,12 +68,14 @@ export const dataUsersList = defineStore("UsersList", () => {
         .then((res) => {
           if (res.status === 200) {
             profile.value = res.data;
-            console.log(profile.value);
           }
         });
       await refreshingProfile; // Czekaj na zakończenie zapytania
     } catch (err) {
-      console.error("Błąd podczas odświeżania informacji o profilu:", err);
+      console.error("Error during refresing the profile:", err);
+      localStorage.removeItem("jwt");
+      localStorage.removeItem("userId");
+      window.location.href = "/login";
     } finally {
       refreshingProfile = null; // Po zakończeniu wyzeruj obietnicę
     }
@@ -68,7 +83,7 @@ export const dataUsersList = defineStore("UsersList", () => {
 
   async function refreshFriendsList() {
     if (refreshingFriends) {
-      // Jeśli zapytanie już trwa, użyj tej samej obietnicy
+      // If request egsist do not sent another one
       return refreshingFriends;
     }
 

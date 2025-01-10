@@ -15,7 +15,7 @@ const router = useRouter()
   <div class="sidebar">
     <div class="top-section">
       <form>
-        <input type="text" placeholder="Friend's Name" />
+        <input type="text" :placeholder="$t('components.friendsSidebar.findfriendplaceholder')" />
         <button type="submit">
           <Icon icon="fa:search" />
         </button>
@@ -23,15 +23,15 @@ const router = useRouter()
     </div>
     <hr />
     <div class="sidebar-options">
-      <button @click="router.push('/app/friends')"><i class="bi bi-person-add"></i> Friends</button>
-      <button @click="router.push('/app/nitro')"><i class="bi bi-gem"></i> Nitro</button>
-      <button @click="router.push('/app/shop')"><i class="bi bi-shop"></i> Shop</button>
+      <button @click="router.push('/app/friends')"><i class="bi bi-person-add"></i> {{ $t('components.friendsSidebar.friends') }}</button>
+      <button @click="router.push('/app/nitro')"><i class="bi bi-gem"></i> {{ $t('components.friendsSidebar.nitro') }}</button>
+      <button @click="router.push('/app/shop')"><i class="bi bi-shop"></i> {{ $t('components.friendsSidebar.shop') }}</button>
     </div>
     <hr />
     <div class="friends-list">
       <FriendComponent
-        v-for="friend in UsersList.friends"
-        imgUrl="../../../../public/img/JoltampIcon.png"
+        v-for="friend in Object.values(UsersList.friends).filter(item => item.friendstatus === 2)"
+        imgUrl='../../img/JoltampIcon.png'
         :key="friend.user_id"
         :userId="friend.user_id"
         :username="friend.displayname"

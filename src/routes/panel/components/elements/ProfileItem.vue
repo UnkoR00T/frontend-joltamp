@@ -20,7 +20,7 @@ const UsersList = dataUsersList()
       <button>
         <Icon icon="solar:headphones-round-bold" />
       </button>
-      <button @click="router.push('/app/settings')">
+      <button @click="router.push('/app/settings/myaccount')">
         <Icon icon="mdi:gear" />
       </button>
     </div>

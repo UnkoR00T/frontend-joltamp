@@ -109,6 +109,7 @@ onMounted(() => {
   </div>
 </template>
 <style scoped>
+
 .navbar-buttons {
   padding-right: 5dvw;
 }
@@ -171,8 +172,11 @@ p {
     padding-top: 90px !important;
   }
 }
+
 .body {
-  margin-top: 30px;
+  height: 100dvh;
+  overflow-y: scroll;
+  margin-top: 50px;
   padding: 5dvw;
   font-family: Arial, sans-serif;
   background-color: #272727;
@@ -219,6 +223,7 @@ p{
   gap: 50px;
 }
 .analyticsBox {
+  height: 370px;
   display: flex;  flex-direction: row;
   justify-content: center;
   gap: 50px;
@@ -257,6 +262,7 @@ p{
   background-color: #C23C3C;
 }
 .status {
+  margin-bottom: 50px;
   display: flex;
   justify-content: center;
   gap: 25px;

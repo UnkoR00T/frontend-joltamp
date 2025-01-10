@@ -74,64 +74,39 @@ const changeSelfInfo = (type: string, newValue: string) => {
 
   // Reset the field value after successful update
 }
-/*
-const fileInput = ref<HTMLInputElement | null>(null);
-const setProfile = () => {
-  axios
-    .post(
-      `${import.meta.env.VITE_BACKEND_ADDRESS}/users/changeSelfInfo`,
-      fileInput.value,
-      {
-        headers: {
-          Authorization: localStorage.getItem('jwt')
-        }
-      }
-    )
-    .then((res) => {
-      if (res.status === 200) {
-        UsersList.refreshProfileInfo();
-        UsersList.getProfile(UsersList.profile.user_id)
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}
-
- */
 </script>
 
 <template>
   <div class="settings">
     <div class="account-view">
       <div class="baner" style="background-color: black">
-        <img class="profile-img" src="https://via.placeholder.com/40" alt="" />
+        <img class="profile-img" src="../../img/JoltampIcon.png" alt="" />
       </div>
       <div class="profile">
         <!--<div class="profilename">{{ UsersList.profile.displayname }}</div>-->
         <table class="main-table">
           <tr>
-            <td>Display Name:</td>
+            <td>{{ $t('components.settingsPanel.settingsmyaccount.displayname') }}:</td>
             <td>{{ UsersList.profile.displayname }}</td>
           </tr>
           <tr>
-            <td>User Name:</td>
+            <td>{{ $t('components.settingsPanel.settingsmyaccount.username') }}:</td>
             <td>{{ UsersList.profile.username }}</td>
           </tr>
           <tr>
-            <td>Description:</td>
+            <td>{{ $t('components.settingsPanel.settingsmyaccount.description') }}:</td>
             <td>{{ UsersList.profile.desc }}</td>
           </tr>
           <tr>
-            <td>Email:</td>
+            <td>{{ $t('components.settingsPanel.settingsmyaccount.email') }}:</td>
             <td>{{ UsersList.profile.email }}</td>
           </tr>
           <tr>
-            <td>Create data:</td>
+            <td>{{ $t('components.settingsPanel.settingsmyaccount.createdata') }}:</td>
             <td>{{ UsersList.profile.createdat }}</td>
           </tr>
           <tr>
-            <td>Status:</td>
+            <td>{{ $t('components.settingsPanel.settingsmyaccount.status') }}:</td>
             <td>
 
               <Icon v-if="UsersList.profile.status === 0" style="color: silver" icon="mage:stop-circle-fill" class="icon" />
@@ -147,26 +122,22 @@ const setProfile = () => {
             </td>
           </tr>
           <details>
-            <summary>SHOW MORE</summary>
+            <summary>{{ $t('components.settingsPanel.settingsmyaccount.showmore') }}</summary>
             <table>
               <tr>
-                <td>Baner Color:</td>
+                <td>{{ $t('components.settingsPanel.settingsmyaccount.bannercolor') }}:</td>
                 <td>
                   <div style="height: 15px; width: 30px;" :style="{backgroundColor: UsersList.profile.bannercolor}"></div>
                 </td>
               </tr>
               <tr>
-                <td>Background color:</td>
+                <td>{{ $t('components.settingsPanel.settingsmyaccount.backgroundcolor') }}:</td>
                 <td>
                   <div style="height: 15px; width: 30px;" :style="{backgroundColor: UsersList.profile.backgroundcolor}"></div>
                 </td>
               </tr>
               <tr>
-                <td>Badges:</td>
-                <td>{{ UsersList.profile.badges }}</td>
-              </tr>
-              <tr>
-                <td>Badges:</td>
+                <td>{{ $t('components.settingsPanel.settingsmyaccount.badges') }}:</td>
                 <td>{{ UsersList.profile.badges }}</td>
               </tr>
             </table>
@@ -178,17 +149,17 @@ const setProfile = () => {
     <div class="profile-options">
 
       <div class="setStatus">
-        <span class="options-title">Set status:</span>
+        <span class="options-title">{{ $t('components.settingsPanel.settingsmyaccount.setstatus') }}:</span>
         <div class="setStatus-buttons">
-          <button @click="setStatus(0)">Invisible</button>
-          <button @click="setStatus(1)">Active</button>
-          <button @click="setStatus(2)">Do not disturb</button>
-          <button @click="setStatus(3)">Idle</button>
+          <button @click="setStatus(0)">{{ $t('components.settingsPanel.settingsmyaccount.0') }}</button>
+          <button @click="setStatus(1)">{{ $t('components.settingsPanel.settingsmyaccount.1') }}</button>
+          <button @click="setStatus(2)">{{ $t('components.settingsPanel.settingsmyaccount.2') }}</button>
+          <button @click="setStatus(3)">{{ $t('components.settingsPanel.settingsmyaccount.3') }}</button>
         </div>
       </div>
 
       <div class="options-all">
-        <span class="options-title">Change description:</span>
+        <span class="options-title">{{ $t('components.settingsPanel.settingsmyaccount.changedescription') }}:</span>
         <form @submit.prevent="changeSelfInfo('desc', selfInfo.desc)">
           <input type="text" v-model="selfInfo.desc" />
           <button type="submit"><Icon class="icon" icon="material-symbols:save" /></button>
@@ -196,7 +167,7 @@ const setProfile = () => {
       </div>
 
       <div class="options-all">
-        <span class="options-title">Change displayname:</span>
+        <span class="options-title">{{ $t('components.settingsPanel.settingsmyaccount.changedisplayname') }}:</span>
         <form @submit.prevent="changeSelfInfo('displayname', selfInfo.displayname)">
           <input type="text" v-model="selfInfo.displayname" />
           <button type="submit"><Icon class="icon" icon="material-symbols:save" /></button>
@@ -212,7 +183,7 @@ const setProfile = () => {
       </div>-->
 
       <div class="options-all">
-        <span class="options-title">Change bannercolor:</span>
+        <span class="options-title">{{ $t('components.settingsPanel.settingsmyaccount.changebannercolor') }}:</span>
         <form @submit.prevent="changeSelfInfo('bannercolor', selfInfo.bannercolor)">
           <input type="color" v-model="selfInfo.bannercolor" />
           <button type="submit"><Icon class="icon" icon="material-symbols:save" /></button>
@@ -220,7 +191,7 @@ const setProfile = () => {
       </div>
 
       <div class="options-all">
-        <span class="options-title">Change background color:</span>
+        <span class="options-title">{{ $t('components.settingsPanel.settingsmyaccount.changebackgroundcolor') }}:</span>
         <form @submit.prevent="changeSelfInfo('backgroundcolor', selfInfo.backgroundcolor)">
           <input type="color" v-model="selfInfo.backgroundcolor" />
           <button type="submit"><Icon class="icon" icon="material-symbols:save" /></button>
@@ -228,7 +199,7 @@ const setProfile = () => {
       </div>
 
       <div class="options-all">
-        <span class="options-title">Change email:</span>
+        <span class="options-title">{{ $t('components.settingsPanel.settingsmyaccount.changeemail') }}:</span>
         <form @submit.prevent="changeSelfInfo('email', selfInfo.email)">
           <input type="email" v-model="selfInfo.email" />
           <button type="submit"><Icon class="icon" icon="material-symbols:save" /></button>

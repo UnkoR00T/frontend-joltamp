@@ -11,7 +11,7 @@ const router = useRouter()
       <ul class="main-list">
         <li>
           <button class="go-back" @click="router.push('/app/friends')">
-            <Icon icon="material-symbols:arrow-back" /> Go back
+            <Icon icon="material-symbols:arrow-back" /> {{ $t('components.settingsPanel.goback') }}
           </button>
         </li>
         <hr />
@@ -23,63 +23,49 @@ const router = useRouter()
         <hr />
         <li>
           <ul>
-            <span class="class-name">USER SETTINGS</span>
-            <li>Account</li>
-            <li>Profiles</li>
-            <li>Privacy & Safety</li>
-            <li>Family Centre</li>
-            <li>Authorised Apps</li>
-            <li>Devices</li>
-            <li>Connections</li>
-            <li>Clips</li>
-            <li>Friend Requests</li>
+            <span class="class-name">{{ $t('components.settingsPanel.usersettings') }}</span>
+            <li @click="router.push('myaccount')">{{ $t('components.settingsPanel.settingsmyaccount.title') }}</li>
+            <li>{{ $t('components.settingsPanel.settingsdevices.title') }}</li>
+            <li>{{ $t('components.settingsPanel.settingsfriendrequests.title') }}</li>
           </ul>
         </li>
         <hr />
         <li>
           <ul>
-            <span class="class-name">PAYMENT SETTINGS</span>
+            <span class="class-name">{{ $t('components.settingsPanel.paymentsettings') }}</span>
 
-            <li>Nitro</li>
-            <li>Server Boost</li>
-            <li>Subscriptions</li>
-            <li>Gift Inventory</li>
-            <li>Billing</li>
+            <li>{{ $t('components.settingsPanel.settingsnitro.title') }}</li>
+            <li>{{ $t('components.settingsPanel.settingsgiftinventory.title') }}</li>
           </ul>
         </li>
         <hr />
         <li>
           <ul>
-            <span class="class-name">APP SETTINGS</span>
+            <span class="class-name">{{ $t('components.settingsPanel.appsettings') }}</span>
 
-            <li>Appearance</li>
-            <li>Accesbility</li>
-            <li>Voice & Video</li>
-            <li>Chat</li>
-            <li>Notofications</li>
-            <li>Keybinds</li>
-            <li>Language</li>
-            <li>Windows Settings</li>
-            <li>Streamer Mode</li>
-            <li>Advanced</li>
+            <li>{{ $t('components.settingsPanel.settingsappearance.title') }}</li>
+            <li>{{ $t('components.settingsPanel.settingsvoiceandvideo.title') }}</li>
+            <li>{{ $t('components.settingsPanel.settingschat.title') }}</li>
+            <li>{{ $t('components.settingsPanel.settingsnotifications.title') }}</li>
+            <li>{{ $t('components.settingsPanel.settingskeybinds.title') }}</li>
+            <li @click="router.push('languages')">{{ $t('components.settingsPanel.settingslanguage.title') }}</li>
+            <li>{{ $t('components.settingsPanel.settingsadvanced.title') }}</li>
           </ul>
         </li>
         <hr />
         <li>
           <ul>
-            <span class="class-name">ACTIVITY SETTINGS</span>
+            <span class="class-name">{{ $t('components.settingsPanel.activitysettings') }}</span>
 
-            <li>Activity Privacy</li>
-            <li>Registered Games</li>
-            <li>Game Overlay</li>
+            <li>{{ $t('components.settingsPanel.settingsactivityandprivacy.title') }}</li>
           </ul>
         </li>
         <hr />
         <li>
           <ul>
-            <span class="class-name">OTHER</span>
+            <span class="class-name">{{ $t('components.settingsPanel.othersettings') }}</span>
 
-            <li>What's New</li>
+            <li>{{ $t('components.settingsPanel.settingswhatsnew.title') }}</li>
           </ul>
         </li>
         <hr />

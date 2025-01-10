@@ -30,14 +30,6 @@
           <span class="ifEdited" v-if="edited">(edited)</span>
         </span>
       </div>
-
-      <!-- Button delete and edit -->
-      <!--<div class="message-actions" v-if="showButtons">
-        <button @click="editMessage"><Icon icon="wpf:edit" /></button>
-        <button @click="deleteMessage"><Icon icon="fa6-solid:reply" /></button>
-        <button @click="deleteMessage"><Icon icon="mingcute:delete-2-line" /></button>
-      </div>-->
-
     </div>
 
 
@@ -76,6 +68,11 @@ const openProfileMenu = (event) => {
 
 const formatContent = () =>{
   formattedContent.value = props.content    // Zamiana nowych linii na <br>
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
     .replace(/\n/g, '<br>')
     // Bold + italic: ***text***
     .replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>')

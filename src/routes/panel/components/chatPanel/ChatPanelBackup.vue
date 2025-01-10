@@ -3,7 +3,6 @@ import MessageContent from "./MessageContent.vue";
 import MessageInput from "./MessageInput.vue";
 import ShowProfileElement from  "./ShowProfileElement.vue";
 import { dataUsersList } from "../../data/users.ts";
-//import { dataChatsList } from "../../data/1chats.ts";
 import {onClickOutside } from "@vueuse/core";
 
 import axios from "axios";
@@ -16,48 +15,110 @@ import {
   onUnmounted,
   nextTick,
 } from "vue";
+import { useWebsockets } from '../../data/websocket.ts'
 
 // DefineStore variables
 const UsersList = dataUsersList();
-//const ChatsList = dataChatsList();
 
 const route = useRoute();
 
-//ChatsList.loadMessages(route.params.id.toString());
-
-const messages = ref<
-  {
-    ServerId: string;
-    TargetId: string;
-    SentAt: string;
-    SentAtTime: number;
-    MessageId: string;
-    Content: string;
-    Edited: boolean;
-    Reactions: any;
-    Reply: string;
-    SentBy: string;
-    ReplyBody: {
-      ServerId: string;
-      TargetId: string;
-      SentAt: string;
-      SentAtTime: number;
-      MessageId: string;
-      Content: string;
-      Edited: boolean;
-      Reactions: any;
-      SentBy: string;
-      [key: string]: any;
-    }
-    [key: string]: any;
-  }[]
->([]);
+const messages = ref<any[]>([]);
 
 const chatWith = ref<string>();
 const lastMessage = ref<any>();
 const oldestMessage = ref<any>(0);
 
+const ws = useWebsockets();
+
+const wsEventListener = async (msg: {
+  type: string;
+  payload: { [key: string]: any };
+}) => {
+  if (
+    msg.payload?.TargetId &&
+    msg.payload.TargetId ==
+    combineUUIDs(
+      route.params.id as string,
+      localStorage.getItem("userId") as string,
+    )
+  ) {
+    console.log("Passed");
+    if (msg.type === "new_message") {
+      const payload = msg.payload as {
+        ServerId: string;
+        TargetId: string;
+        SentAt: string;
+        SentAtTime: number;
+        MessageId: string;
+        Content: string;
+        Edited: boolean;
+        Reactions: any;
+        Reply: string;
+        SentBy: string;
+        ReplyBody: {
+          ServerId: string;
+          TargetId: string;
+          SentAt: string;
+          SentAtTime: number;
+          MessageId: string;
+          Content: string;
+          Edited: boolean;
+          Reactions: any;
+          SentBy: string;
+          [key: string]: any;
+        };
+        [key: string]: any;
+      };
+      messages.value.unshift({
+        ...payload,
+        sendStatus: 0,
+        displayname: (await UsersList.findUser(payload.SentBy)).displayname,
+        combineMessage: !checkTimeDifferences(lastMessage.value, payload),
+      });
+      lastMessage.value = msg.payload;
+    } else if (msg.type === "edit_message") {
+      const payload = msg.payload as {
+        ServerId: string; // Represents the server ID (string)
+        TargetId: string; // Represents the target ID (string)
+        SentAt: string; // ISO 8601 date format (string)
+        SentAtTime: number; // Unix timestamp in milliseconds (number)
+        MessageId: string; // Unique message identifier (string)
+        Content: string; // The message content (string)
+        [key: string]: any;
+      };
+      const findMsg = messages.value.find(
+        (x) =>
+          x.MessageId == payload.MessageId && x.TargetId == payload.TargetId,
+      );
+      if (findMsg) {
+        findMsg.Content = payload.Content;
+        findMsg.Edited = true;
+      }
+    } else if (msg.type === "delete_message"){
+      const payload = msg.payload as {
+        ServerId: string; // Represents the server ID (string)
+        TargetId: string; // Represents the target ID (string)
+        MessageId: string; // Unique message identifier (string)
+        SentAt: string; // ISO 8601 date format (string)
+        SentAtTime: number; // Unix timestamp in milliseconds (number)
+        [key: string]: any;
+      }
+      messages.value = messages.value.filter(x => x.MessageId !== payload.MessageId)
+    }
+  }
+};
+
+ws.addMessageListener(wsEventListener);
+
 // Functions:
+
+function combineUUIDs(uuid1: string, uuid2: string): string {
+  // Ensure alphabetical order
+  const [first, second] = [uuid1, uuid2].sort();
+  // Return combined UUIDs
+  return `${first}_${second}`;
+}
+
 //Chat with function
 
 const chatWithUser = async () => {
@@ -99,7 +160,7 @@ const loadMessages = () => {
         if (response.data[0]) oldestMessage.value = response.data[0];
         messages.value = messages.value.concat(response.data.reverse());
         groupMessages();
-        //console.log(response.data)
+        console.log(response.data)
       }
     });
 };
@@ -131,8 +192,8 @@ const groupMessages = async () => {
     if (x.Reply) {
       UsersList.findUser(x.ReplyBody.SentBy).then((user: any) => {
         messages.value[
-          messages.value.length - 1 - index
-        ].ReplyBody.displayname = user.displayname;
+        messages.value.length - 1 - index
+          ].ReplyBody.displayname = user.displayname;
       });
     }
 
@@ -212,7 +273,6 @@ watch(
       oldestMessage.value = {};
       loadMessages();
       chatWithUser();
-
     }
   },
 );
@@ -234,12 +294,10 @@ const changeMessageContent = (changedMessage: any) => {
   const messageToChange = messages.value.find(
     (message) => message.MessageId === changedMessage.MessageId,
   );
-  if (messageToChange){
-    messageToChange.Content = changedMessage.Content;
-    messageToChange.Edited = true;
-  }
-  //console.log(messageToChange);
-  //console.log(messages.value);
+  messageToChange.Content = changedMessage.Content;
+  messageToChange.Edited = true;
+  console.log(messageToChange);
+  console.log(messages.value);
 };
 
 //Before Mound
@@ -313,7 +371,7 @@ const editMessageData = ref<any>();
 const isInputFocused = ref(false);
 
 function addReaction() {
-  //console.log("add reaction");
+  console.log("add reaction");
 }
 
 function replyMessage(replyMessageId: String) {
@@ -458,7 +516,7 @@ onClickOutside(clickOutsideUserProfile, () => {
   <div class="main-content">
     <div class="chat-section">
       <div class="chat-header">
-        <h3>{{ $t('components.chatPanel.chatwith') }} {{ chatWith }}</h3>
+        <h3>Chat with {{ chatWith }}</h3>
         <div class="chat-header-icons">
           <button class="header-icon">
             <Icon icon="mingcute:phone-call-fill" />
@@ -504,19 +562,19 @@ onClickOutside(clickOutsideUserProfile, () => {
           :style="{ top: `${mousePosition.y}px`, left: `${mousePosition.x}px` }"
         >
           <ul>
-            <li @click="addReaction">{{ $t('components.chatPanel.addreaction') }}</li>
-            <li @click="replyMessage(contextMenuMessageId)">{{ $t('components.chatPanel.reply') }}</li>
+            <li @click="addReaction">Add reaction</li>
+            <li @click="replyMessage(contextMenuMessageId)">Reply</li>
             <li
               v-if="ifMyMessage(contextMenuMessageId)"
               @click="editMessage(contextMenuMessageId)"
             >
-              {{ $t('components.chatPanel.editmessage') }}
+              Edit Message
             </li>
             <li
               v-if="ifMyMessage(contextMenuMessageId)"
               @click="deleteMessage(contextMenuMessageId)"
             >
-              {{ $t('components.chatPanel.deletemessage') }}
+              Delete Message
             </li>
           </ul>
         </div>

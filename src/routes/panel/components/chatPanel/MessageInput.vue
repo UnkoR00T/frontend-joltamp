@@ -2,7 +2,7 @@
   <div class="chat-container">
     <div class="option-panel" v-if="OptionMessageId !== 0">
       <div class="option-panel-message" v-if="OptionMessageId === 1">
-        <span class="option-text">Edit message: </span>
+        <span class="option-text">{{ $t('components.chatPanel.editingmessage') }}: </span>
         <span class="option-user">{{ editMessage.Content }}</span>
         <Icon
           @click="closeOptionPanel"
@@ -11,7 +11,7 @@
         />
       </div>
       <div class="option-panel-message" v-if="OptionMessageId === 2">
-        <span class="option-text">Replying to</span>
+        <span class="option-text">{{ $t('components.chatPanel.replyingmessage') }}: </span>
         <span class="option-user">{{ replyMessage.Content }}</span>
         <Icon
           @click="closeOptionPanel"
@@ -32,7 +32,7 @@
           @keydown="handleKeyDown"
           :style="{ height: `${messageInput.height}px` }"
           type="text"
-          placeholder="Type a message..."
+          :placeholder="$t('components.chatPanel.inputplaceholder')"
           v-model="messageInput.content"
         />
         <button type="submit"><Icon icon="fa:send" /></button>

@@ -1,0 +1,108 @@
+{
+  "buttons": {
+    "logout": {
+      "title": "Cerrar sesión"
+    }
+  },
+  "components": {
+    "chatPanel": {
+      "chatwith": "Charlar con",
+      "addreaction": "Añadir reacción",
+      "reply": "Responder",
+      "editmessage": "Editar mensaje",
+      "deletemessage": "Eliminar mensaje",
+      "editingmessage": "Editando mensaje",
+      "replyingmessage": "Respondiendo mensaje",
+      "inputplaceholder": "Escribe un mensaje",
+      "profilesendmessage": "Enviar mensaje"
+    },
+    "elements": {},
+    "friendsList": {
+      "online": "En línea",
+      "all": "Todos",
+      "pending": "Pendientes",
+      "blocked": "Bloqueados",
+      "addfriend": "Añadir amigo",
+      "sendrequest": "Enviar solicitud"
+    },
+    "friendsSidebar": {
+      "findfriendplaceholder": "Buscar amigo",
+      "friends": "Amigos",
+      "nitro": "Nitro",
+      "shop": "Tienda"
+    },
+    "serverChannels": {},
+    "serverChatPanel": {},
+    "serverList": {},
+    "settingsPanel": {
+      "goback": "Volver",
+      "usersettings": "AJUSTES DE USUARIO",
+      "paymentsettings": "AJUSTES DE PAGO",
+      "appsettings": "AJUSTES DE LA APLICACIÓN",
+      "activitysettings": "AJUSTES DE ACTIVIDAD",
+      "othersettings": "OTROS",
+      "settingsmyaccount": {
+        "title": "Mi cuenta",
+        "displayname": "Nombre visible",
+        "username": "Nombre de usuario",
+        "description": "Descripción",
+        "email": "Correo electrónico",
+        "createdata": "Fecha de creación",
+        "status": "Estado",
+        "showmore": "MOSTRAR MÁS",
+        "bannercolor": "Color de banner",
+        "backgroundcolor": "Color de fondo",
+        "badges": "Insignias",
+        "setstatus": "Establecer estado",
+        "0": "Invisible",
+        "1": "Activo",
+        "2": "No molestar",
+        "3": "Inactivo",
+        "changedescription": "Cambiar descripción",
+        "changedisplayname": "Cambiar nombre visible",
+        "changebannercolor": "Cambiar color de banner",
+        "changebackgroundcolor": "Cambiar color de fondo",
+        "changeemail": "Cambiar correo electrónico"
+      },
+      "settingsdevices": {
+        "title": "Dispositivos"
+      },
+      "settingsfriendrequests": {
+        "title": "Solicitudes de amistad"
+      },
+      "settingsnitro": {
+        "title": "Nitro"
+      },
+      "settingsgiftinventory": {
+        "title": "Inventario de regalos"
+      },
+      "settingsappearance": {
+        "title": "Apariencia"
+      },
+      "settingsvoiceandvideo": {
+        "title": "Voz y vídeo"
+      },
+      "settingschat": {
+        "title": "Chat"
+      },
+      "settingsnotifications": {
+        "title": "Notificaciones"
+      },
+      "settingskeybinds": {
+        "title": "Combinaciones de teclas"
+      },
+      "settingslanguage": {
+        "title": "Idioma"
+      },
+      "settingsadvanced": {
+        "title": "Avanzado"
+      },
+      "settingsactivityandprivacy": {
+        "title": "Actividad y privacidad"
+      },
+      "settingswhatsnew": {
+        "title": "Novedades"
+      }
+    }
+  }
+}

@@ -41,17 +41,17 @@ const addFriend = () => {
           Friends
         </h3>
         <div class="friends-options">
-          <button class="header-icon">Online</button>
-          <button class="header-icon">All</button>
-          <button class="header-icon">Pending</button>
-          <button class="header-icon">Blocked</button>
-          <button class="header-icon add-friend-icon">Add Friend</button>
+          <button class="header-icon">{{ $t('components.friendsList.online') }}</button>
+          <button class="header-icon">{{ $t('components.friendsList.all') }}</button>
+          <button class="header-icon">{{ $t('components.friendsList.pending') }}</button>
+          <button class="header-icon">{{ $t('components.friendsList.blocked') }}</button>
+          <button class="header-icon add-friend-icon">{{ $t('components.friendsList.addfriend') }}</button>
         </div>
       </div>
       <hr />
       <form class="find-friend" @submit.prevent="addFriend">
         <input type="text" id="addFriend" placeholder="Search" v-model="addFriendName" />
-        <button type="submit">Find friend</button>
+        <button type="submit">{{ $t('components.friendsList.sendrequest') }}</button>
       </form>
       <hr />
       <div class="friends-count">ONLINE -</div>

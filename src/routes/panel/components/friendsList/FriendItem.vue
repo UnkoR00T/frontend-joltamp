@@ -136,6 +136,7 @@ const deleteFriend = () => {
           <div v-if="friendstatus === 1" @click="acceptFriend" class="option"><Icon icon="flat-color-icons:ok" /></div>
           <div v-if="friendstatus === 1" @click="declineFriend" class="option"><Icon icon="material-symbols:cancel-outline-rounded" /></div>
           <div v-if="friendstatus === 2" @click="deleteFriend" class="option"><Icon icon="material-symbols:delete-outline" /></div>
+          <RouterLink :to="'/app/chat/' + userId"><div v-if="friendstatus === 0" class="option"><Icon icon="uil:message" /></div></RouterLink>
           <div v-if="friendstatus === 0" @click="deleteFriend" class="option"><Icon icon="material-symbols:cancel-outline-rounded" /></div>
 
 

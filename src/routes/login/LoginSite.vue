@@ -5,7 +5,7 @@ import axios from 'axios'
 
 const router = useRouter()
 
-if (localStorage.getItem('userId')) {
+if (localStorage.getItem('userId') && localStorage.getItem('jwt')) {
   router.push('/app/friends')
 }
 

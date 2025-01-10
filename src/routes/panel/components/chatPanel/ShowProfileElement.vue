@@ -47,7 +47,7 @@ const props = defineProps<{
       <div class="username"><p>{{ props.user.user.username }}</p></div>
       <div class="desc">{{ props.user.user.desc }}</div>
       <RouterLink :to=" props.user.user.user_id" class="btn-profile">
-        Send Message
+        {{ $t('components.chatPanel.profilesendmessage') }}
       </RouterLink>
     </div>
   </div>
